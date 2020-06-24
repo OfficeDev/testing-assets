@@ -8,7 +8,7 @@ On dev machine, if createwebsite step is already done, please
 2. `richapi\test\RichApiAgaveWeb\CopyJsFromTarget.bat`
 3. 
 ```console
-cd shortcut-sample
+cd shortcut-sample-revision1
 http-server --cors
 ```
 4. Then use `fe428017-cb57-4a11-83b4-3e2eda874437.xml` in the insert dialog.
