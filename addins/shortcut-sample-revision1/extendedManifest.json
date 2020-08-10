@@ -15,31 +15,31 @@
         {
             "action": "SETBOLD",
             "key": {
-                "default": "${resourecs.setbold_default_key}"
+                "default": "${resource.setbold_default_key}"
             }
         },
         {
             "action": "SETITALIC",
             "key": {
-                "default": "${resourecs.setitalic_default_key}"
+                "default": "${resource.setitalic_default_key}"
             }
         },
         {
             "action": "SETCOLOR",
             "key": {
-                "default": "${resourecs.setcolor_default_key}"
+                "default": "${resource.setcolor_default_key}"
             }
         },
         {
             "action": "SETUNDERLINE",
             "key": {
-                "default": "${resourecs.setunderline_default_key}"
+                "default": "${resource.setunderline_default_key}"
             }
         },
         {
             "action": "SETDATEFORMAT",
             "key": {
-                "default": "${resourecs.setdateformat_default_key}"
+                "default": "${resource.setdateformat_default_key}"
             }
         }
     ],
