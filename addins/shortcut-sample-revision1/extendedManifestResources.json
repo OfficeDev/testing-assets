@@ -1,0 +1,30 @@
+{
+    "showtaskpane_default_key": {
+        "value": "CTRL+SHIFT+UP",
+        "comment": "Shortcut key for showtaskpane"
+    },
+    "closetaskpane_default_key": {
+        "value": "CTRL+SHIFT+DOWN",
+        "comment": "Shortcut key for hidetaskpane"
+    },
+    "setbold_default_key": {
+        "value": "CTRL+SHIFT+B",
+        "comment": "Shortcut key for setbold"
+    },
+    "setitalic_default_key": {
+        "value": "CTRL+SHIFT+I",
+        "comment": "Shortcut key for setitalic"
+    },
+    "setcolor_default_key": {
+        "value": "CTRL+SHIFT+O",
+        "comment": "Shortcut key for setcolor"
+    },
+    "setunderline_default_key": {
+        "value": "CTRL+SHIFT+U",
+        "comment": "Shortcut key for setunderline"
+    },
+    "setdateformat_default_key": {
+        "value": "CTRL+SHIFT+D",
+        "comment": "Shortcut key for setdateformat"
+    }
+}

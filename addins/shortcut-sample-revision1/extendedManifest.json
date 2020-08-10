@@ -1,0 +1,78 @@
+{
+    "shortcuts": [
+        {
+            "action": "SHOWTASKPANE",
+            "key": {
+                "default": "${resource.showtaskpane_default_key}"
+            }
+        },
+        {
+            "action": "HIDETASKPANE",
+            "key": {
+                "default": "${resource.closetaskpane_default_key}"
+            }
+        },
+        {
+            "action": "SETBOLD",
+            "key": {
+                "default": "${resourecs.setbold_default_key}"
+            }
+        },
+        {
+            "action": "SETITALIC",
+            "key": {
+                "default": "${resourecs.setitalic_default_key}"
+            }
+        },
+        {
+            "action": "SETCOLOR",
+            "key": {
+                "default": "${resourecs.setcolor_default_key}"
+            }
+        },
+        {
+            "action": "SETUNDERLINE",
+            "key": {
+                "default": "${resourecs.setunderline_default_key}"
+            }
+        },
+        {
+            "action": "SETDATEFORMAT",
+            "key": {
+                "default": "${resourecs.setdateformat_default_key}"
+            }
+        }
+    ],
+    "resources": {
+        "default": {
+            "showtaskpane_default_key": {
+                "value": "CTRL+SHIFT+UP",
+                "comment": "Shortcut key for showtaskpane"
+            },
+            "closetaskpane_default_key": {
+                "value": "CTRL+SHIFT+DOWN",
+                "comment": "Shortcut key for hidetaskpane"
+            },
+            "setbold_default_key": {
+                "value": "CTRL+SHIFT+B",
+                "comment": "Shortcut key for setbold"
+            },
+            "setitalic_default_key": {
+                "value": "CTRL+SHIFT+I",
+                "comment": "Shortcut key for setitalic"
+            },
+            "setcolor_default_key": {
+                "value": "CTRL+SHIFT+O",
+                "comment": "Shortcut key for setcolor"
+            },
+            "setunderline_default_key": {
+                "value": "CTRL+SHIFT+U",
+                "comment": "Shortcut key for setunderline"
+            },
+            "setdateformat_default_key": {
+                "value": "CTRL+SHIFT+D",
+                "comment": "Shortcut key for setdateformat"
+            }
+        }
+    }
+}

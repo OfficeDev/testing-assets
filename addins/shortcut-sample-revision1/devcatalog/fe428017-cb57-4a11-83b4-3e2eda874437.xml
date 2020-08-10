@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Created: fe428017-cb57-4a11-83b4-3e2eda874437 -->
+<!--Created: 67e44294-cffd-43a5-87dd-4b92479538b9 -->
 <OfficeApp 
     xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -10,7 +10,7 @@
   <!-- Begin Basic Settings: Add-in metadata, used for all versions of Office unless override provided. -->
 
   <!-- IMPORTANT! Id must be unique for your add-in, if you reuse this manifest ensure that you change this id to a new GUID. -->
-  <Id>fe428017-cb57-4a11-83b4-3e2eda874437</Id>
+  <Id>67e44294-cffd-43a5-87dd-4b92479538b9</Id>
 
   <!--Version. Updates from the store only get triggered if there is a version change. -->
   <Version>1.0.0.0</Version>
@@ -34,7 +34,7 @@
     </Sets>
   </Requirements>
   <DefaultSettings>
-    <SourceLocation DefaultValue="http://localhost:8080/home.html" />
+    <SourceLocation DefaultValue="https://officedev.github.io/testing-assets/addins/shortcut-sample-revision1/home.html" />
   </DefaultSettings>
   <!-- End TaskPane Mode integration.  -->
 
@@ -123,7 +123,7 @@
         <bt:Image id="OEP.tpicon_80x80" DefaultValue="https://officedev.github.io/testing-assets/addins/images/button80x80.png" />
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="OEP.SharedRuntime.Url" DefaultValue="http://localhost:8080/home.html" />
+        <bt:Url id="OEP.SharedRuntime.Url" DefaultValue="https://officedev.github.io/testing-assets/addins/shortcut-sample-revision1/home.html" />
         <bt:Url id="OEP.GetStarted.LearnMoreUrl" DefaultValue="https://go.microsoft.com/fwlink/?LinkId=276812" />
       </bt:Urls>
       <!-- ShortStrings max characters==125. -->
@@ -140,6 +140,10 @@
     </Resources>
   </VersionOverrides>
   <!-- End Add-in Commands Mode integration. -->
-   <ExtendedOverridesUrl DefaultValue="http://localhost:8080/extended-manifest.json"></ExtendedOverridesUrl>
+   <ExtendedOverridesUrl DefaultValue="https://officedev.github.io/testing-assets/addins/shortcut-sample-revision1/extended-manifest.json"></ExtendedOverridesUrl>
+    <ExtendedOverrides
+    Url="https://officedev.github.io/testing-assets/addins/shortcut-sample-revision1/extendedManifest.json"
+    ResourcesUrl="https://officedev.github.io/testing-assets/addins/shortcut-sample-revision1/extendedManifestResources.json">
+  </ExtendedOverrides>
   <!-- End Add-in Commands Mode integration. -->
 </OfficeApp>
