@@ -13,9 +13,6 @@
 		var g_sharedAppData = {};
 		function appCmdUpdateSharedAppData(event) {
 			g_sharedAppData.value = 2019;
-			setTimeout(function () {
-				Office.addin.showAsTaskpane();
-			}, 5000);
 			event.completed();
 		}
 	</script>
