@@ -1,0 +1,19 @@
+﻿{
+  "functions": [
+    {
+      "id": "GetValue",
+      "name": "GetValue",
+      "description": "Get shared value"
+    },
+    {
+      "id": "SetValue",
+      "name": "SetValue",
+      "description": "Set shared value",
+      "parameters": [
+        {
+          "name": "value"
+        }
+      ]
+    }
+  ]
+}

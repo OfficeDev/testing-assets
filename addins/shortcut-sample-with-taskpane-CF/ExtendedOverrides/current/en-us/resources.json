@@ -1,0 +1,58 @@
+{
+    "showtaskpane_default_key": {
+        "value": "CTRL+SHIFT+UP",
+        "comment": "Short key for showtaskpane"
+    },
+    "closetaskpane_default_key": {
+        "value": "CTRL+SHIFT+DOWN",
+        "comment": "Short key for hidetaskpane"
+    },
+    "setbold_default_key": {
+        "value": "CTRL+SHIFT+B",
+        "comment": "Short key for setbold"
+    },
+    "setitalic_default_key": {
+        "value": "CTRL+SHIFT+I",
+        "comment": "Short key for setitalic"
+    },
+    "setcolor_default_key": {
+        "value": "CTRL+SHIFT+O",
+        "comment": "Short key for setcolor"
+    },
+    "setunderline_default_key": {
+        "value":  "CTRL+SHIFT+U",
+        "comment": "Short key for setunderline"
+    },
+    "setformat_default_key": {
+        "value": "CTRL+SHIFT+D",
+        "comment": "Short key for setformat"
+    },
+    "ShowTaskpaneAction_name": {
+        "value": "Show taskpane",
+        "comment": "Display name for action"
+    },
+    "HideTaskpaneAction_name": {
+        "value": "Hide taskpane",
+        "comment": "Display name for action"
+    },
+    "SetBoldAction_name": {
+        "value": "Set bold",
+        "comment": "Display name for action"
+    },
+    "SetItalicAction_name": {
+        "value": "Set italic",
+        "comment": "Display name for action"
+    },
+    "SetColorAction_name": {
+        "value": "Set color",
+        "comment": "Display name for action"
+    },
+    "SetUnderlineAction_name": {
+        "value": "Set underline",
+        "comment": "Display name for action"
+    },
+    "SetFormatAction_name": {
+        "value": "Set format",
+        "comment": "Display name for action"
+    }
+}
