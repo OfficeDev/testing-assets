@@ -140,6 +140,8 @@
     </Resources>
   </VersionOverrides>
   <!-- End Add-in Commands Mode integration. -->
-   <ExtendedOverridesUrl DefaultValue="https://officedev.github.io/testing-assets/addins/shortcut-sample/extended-manifest.json"></ExtendedOverridesUrl>
+  <ExtendedOverrides
+    Url="https://officedev.github.io/testing-assets/addins/shortcut-sample/extended-manifest.json">
+  </ExtendedOverridesUrl>
   <!-- End Add-in Commands Mode integration. -->
 </OfficeApp>
