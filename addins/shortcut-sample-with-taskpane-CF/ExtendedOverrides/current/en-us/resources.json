@@ -1,30 +1,30 @@
 {
     "showtaskpane_default_key": {
-        "value": "CTRL+SHIFT+UP",
+        "value": "COMMAND+SHIFT+UP",
         "comment": "Short key for showtaskpane"
     },
     "closetaskpane_default_key": {
-        "value": "CTRL+SHIFT+DOWN",
+        "value": "COMMAND+SHIFT+DOWN",
         "comment": "Short key for hidetaskpane"
     },
     "setbold_default_key": {
-        "value": "CTRL+SHIFT+B",
+        "value": "COMMAND+SHIFT+B",
         "comment": "Short key for setbold"
     },
     "setitalic_default_key": {
-        "value": "CTRL+SHIFT+I",
+        "value": "COMMAND+SHIFT+I",
         "comment": "Short key for setitalic"
     },
     "setcolor_default_key": {
-        "value": "CTRL+SHIFT+O",
+        "value": "COMMAND+SHIFT+O",
         "comment": "Short key for setcolor"
     },
     "setunderline_default_key": {
-        "value":  "CTRL+SHIFT+U",
+        "value":  "COMMAND+SHIFT+U",
         "comment": "Short key for setunderline"
     },
     "setformat_default_key": {
-        "value": "CTRL+SHIFT+D",
+        "value": "COMMAND+SHIFT+D",
         "comment": "Short key for setformat"
     },
     "ShowTaskpaneAction_name": {
