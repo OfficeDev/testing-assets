@@ -142,6 +142,6 @@
   <!-- End Add-in Commands Mode integration. -->
   <ExtendedOverrides
     Url="https://officedev.github.io/testing-assets/addins/shortcut-sample/extended-manifest.json">
-  </ExtendedOverridesUrl>
+  </ExtendedOverrides>
   <!-- End Add-in Commands Mode integration. -->
 </OfficeApp>
