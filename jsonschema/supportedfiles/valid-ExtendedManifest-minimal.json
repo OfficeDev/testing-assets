@@ -1,0 +1,23 @@
+{
+    "$schema": "../extended-manifest.schema.json",
+    "shortcuts": [
+        {
+            "action": "ShowTaskpane",
+            "key": {
+                "default": "${resource.showtaskpane_default_key}"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "id": "ShowTaskpane"
+        }
+    ],
+    "resources": {
+        "default": {
+            "showtaskpane_default_key": {
+                "value": "CTRL+SHIFT+UP"
+            }
+        }
+    }
+}
