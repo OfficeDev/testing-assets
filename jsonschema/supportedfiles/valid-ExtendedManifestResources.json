@@ -1,0 +1,19 @@
+{
+    "$schema": "../extended-Manifest-Resources.schema.json",
+    "showtaskpane_default_key": {
+        "value": "CTRL+SHIFT+UP",
+        "comment": "Short key for showtaskpane"
+    },
+    "closetaskpane_default_key": {
+        "value": "CTRL+SHIFT+DOWN",
+        "comment": "Short key for hidetaskpane"
+    },
+    "ShowTaskpaneAction_name": {
+        "value": "Show taskpane",
+        "comment": "Display name for action"
+    },
+    "HideTaskpaneAction_name": {
+        "value": "Hide taskpane",
+        "comment": "Display name for action"
+    }
+}

@@ -1,0 +1,46 @@
+{
+    "$schema": "../extended-manifest.schema.json",
+    "shortcuts": [
+        {
+            "action": "ShowTaskpane"
+        },
+        {
+            "action": "HideTaskpane",
+            "key": {
+                "default": "${resource.closetaskpane_default_key}"
+            }
+        }
+    ],
+    "actions": [
+        {
+            "id": "ShowTaskpane",
+            "type": "ExecuteFunction",
+            "name": "${resource.ShowTaskpaneAction_name}"
+        },
+        {
+            "id": "HideTaskpane",
+            "type": "ExecuteFunction",
+            "name": "${resource.HideTaskpaneAction_name}"
+        }
+    ],
+    "resources": {
+        "default": {
+            "showtaskpane_default_key": {
+                "value": "CTRL+SHIFT+UP",
+                "comment": "Short key for showtaskpane"
+            },
+            "closetaskpane_default_key": {
+                "value": "CTRL+SHIFT+DOWN",
+                "comment": "Short key for hidetaskpane"
+            },
+            "ShowTaskpaneAction_name": {
+                "value": "Show taskpane",
+                "comment": "Display name for action"
+            },
+            "HideTaskpaneAction_name": {
+                "value": "Hide taskpane",
+                "comment": "Display name for action"
+            }
+        }
+    }
+}

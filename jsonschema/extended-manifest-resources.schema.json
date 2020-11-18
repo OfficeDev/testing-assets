@@ -1,0 +1,34 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "JSON Schema for Office Add-in Extended Manifest Resources",
+    "description": "A file providing extra information for extended functionalities for an Office Add-in.",
+    "type": "object",
+    "properties": {
+        "$schema": {
+            "description": "The extended manifest resources json schema file.",
+            "type": "string"
+        }
+    },
+    "additionalProperties": {"$ref": "#/definitions/resource"},
+    "minProperties":1,
+    "definitions": {
+        "resource": {
+            "title": "resource",
+            "description": "Resource entry.",
+            "type": "object",
+            "required": ["value"],
+            "properties": {
+                "value": {
+                    "title": "Resource Value",
+                    "description": "The value of the resource entry.",
+                    "type": "string"
+                },
+                "comment": {
+                    "title": "Resource Comment",
+                    "description": "The comment of the resource entry.",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
