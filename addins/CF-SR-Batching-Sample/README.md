@@ -48,6 +48,7 @@ To run this sample, download the code and go to the **Batching** folder in a com
 1. Run `npm install`.
 2. Run `npm run build`.
 3. Run `npm run start`. The sample will now sideload into Excel on desktop.
+4. Click InvokeCF button (Inside Taskpane) or Run Action (UiLess AppCommand button). This will execute around 18000 CF in batch.
 
 ### Key parts of the sample
 The code pattern contains two custom functions named `DIV2` and `MUL2`. Instead of performing the calculation, each of them calls a `_pushOperation` function to push the operation into a batch queue to be passed to a web service.
