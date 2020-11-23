@@ -1,0 +1,295 @@
+{
+  "$schema": "./ribbon.schema.json",
+  "$comment": "A valid example for contextual tab.",
+  "version": "1.0",
+  "actions": [
+    {
+      "id": "showTaskpaneSharedRuntime",
+      "type": "ShowTaskpane",
+      "supportPinning": false
+    },
+    {
+      "id": "showTaskpaneNoneSharedRuntime",
+      "type": "ShowTaskpane",
+      "sourceLocation": "https://sample.test.net/dev.html",
+      "taskpaneId": "Taskpane1",
+      "title": "TakspaneTitle",
+      "supportPinning": false
+    },
+    {
+      "id": "ExecuteFunctionSharedRuntime",
+      "type": "ExecuteFunction",
+      "functionName": "enableBtnD1"
+    },
+    {
+      "id": "ExecuteFunctionNoneSharedRuntime",
+      "type": "ExecuteFunction",
+      "functionFile": "https://sample.test.net/agaves/testapps/app/home/HomeAppCmds.html",
+      "functionName": "writeformula"
+    }
+  ],
+  "tabs": [
+    {
+      "id": "OEP.TabD",
+      "label": "TabD",
+      "visible": true,
+      "groups": [
+        {
+          "id": "OEP.TabD.Group0",
+          "label": "GroupD0",
+          "icon": [
+            {
+              "size": 16,
+              "sourceLocation": "https://sample.test.net/Images/Button16x16.png"
+            },
+            {
+              "size": 32,
+              "sourceLocation": "https://sample.test.net/Images/Button32x32.png"
+            },
+            {
+              "size": 80,
+              "sourceLocation": "https://sample.test.net/Images/Button80x80.png"
+            }
+          ],
+          "controls": [
+            {
+              "type": "Button",
+              "id": "OEP.TabD.Button0",
+              "enabled": true,
+              "icon": [
+                {
+                  "size": 16,
+                  "sourceLocation": "https://sample.test.net/Images/Button16x16.png"
+                },
+                {
+                  "size": 32,
+                  "sourceLocation": "https://sample.test.net/Images/Button32x32.png"
+                },
+                {
+                  "size": 80,
+                  "sourceLocation": "https://sample.test.net/Images/Button80x80.png"
+                }
+              ],
+              "label": "ButtonD0",
+              "toolTip": "Btn111ToolTip",
+              "superTip": {
+                "title": "Btn111SuperTipTitle",
+                "description": "Btn111SuperTipDescscriptionlongstring."
+              },
+              "actionId": "showTaskpaneSharedRuntime"
+            },
+            {
+              "type": "Button",
+              "id": "OEP.TabD.Button1",
+              "enabled": false,
+              "icon": [
+                {
+                  "size": 16,
+                  "sourceLocation": "https://sample.test.net/Images/Button16x16.png"
+                },
+                {
+                  "size": 32,
+                  "sourceLocation": "https://sample.test.net/Images/Button32x32.png"
+                },
+                {
+                  "size": 80,
+                  "sourceLocation": "https://sample.test.net/Images/Button80x80.png"
+                }
+              ],
+              "label": "ButtonD1",
+              "toolTip": "Btn111ToolTip",
+              "superTip": {
+                "title": "Btn111SuperTipTitle",
+                "description": "Btn111SuperTipDescscriptionlongstring."
+              },
+              "actionId": "showTaskpaneSharedRuntime"
+            },
+            {
+              "type": "Button",
+              "id": "OEP.TabD.Button2",
+              "enabled": true,
+              "icon": [
+                {
+                  "size": 16,
+                  "sourceLocation": "https://sample.test.net/Images/Button16x16.png"
+                },
+                {
+                  "size": 32,
+                  "sourceLocation": "https://sample.test.net/Images/Button32x32.png"
+                },
+                {
+                  "size": 80,
+                  "sourceLocation": "https://sample.test.net/Images/Button80x80.png"
+                }
+              ],
+              "label": "ButtonD2",
+              "toolTip": "Btn111ToolTip",
+              "superTip": {
+                "title": "Btn111SuperTipTitle",
+                "description": "Btn111SuperTipDescscriptionlongstring."
+              },
+              "actionId": "ExecuteFunctionSharedRuntime"
+            },
+            {
+              "type": "Button",
+              "id": "OEP.TabD.Button3",
+              "enabled": true,
+              "icon": [
+                {
+                  "size": 16,
+                  "sourceLocation": "https://sample.test.net/Images/Button16x16.png"
+                },
+                {
+                  "size": 32,
+                  "sourceLocation": "https://sample.test.net/Images/Button32x32.png"
+                },
+                {
+                  "size": 80,
+                  "sourceLocation": "https://sample.test.net/Images/Button80x80.png"
+                }
+              ],
+              "label": "ButtonD3",
+              "toolTip": "Btn111ToolTip",
+              "superTip": {
+                "title": "Btn111SuperTipTitle",
+                "description": "Btn111SuperTipDescscriptionlongstring."
+              },
+              "actionId": "showTaskpaneNoneSharedRuntime"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "OEP.TabE",
+      "label": "TabE",
+      "visible": true,
+      "groups": [
+        {
+          "id": "OEP.TabE.Group0",
+          "label": "GroupE0",
+          "icon": [
+            {
+              "size": 16,
+              "sourceLocation": "https://sample.test.net/Images/Button16x16.png"
+            },
+            {
+              "size": 32,
+              "sourceLocation": "https://sample.test.net/Images/Button32x32.png"
+            },
+            {
+              "size": 80,
+              "sourceLocation": "https://sample.test.net/Images/Button80x80.png"
+            }
+          ],
+          "controls": [
+            {
+              "type": "Button",
+              "id": "OEP.TabE.Button0",
+              "enabled": true,
+              "icon": [
+                {
+                  "size": 16,
+                  "sourceLocation": "https://sample.test.net/Images/Button16x16.png"
+                },
+                {
+                  "size": 32,
+                  "sourceLocation": "https://sample.test.net/Images/Button32x32.png"
+                },
+                {
+                  "size": 80,
+                  "sourceLocation": "https://sample.test.net/Images/Button80x80.png"
+                }
+              ],
+              "label": "ButtonE0",
+              "toolTip": "Btn111ToolTip",
+              "superTip": {
+                "title": "Btn111SuperTipTitle",
+                "description": "Btn111SuperTipDescscriptionlongstring."
+              },
+              "actionId": "showTaskpaneSharedRuntime"
+            },
+            {
+              "type": "Menu",
+              "id": "CustomRibbonTab1Menu1",
+              "label": "Menu111Label",
+              "toolTip": "Btn112ToolTip",
+              "superTip": {
+                "title": "Btn112SupertTipeTitle",
+                "description": "Btn112SuperTipDesc"
+              },
+              "icon": [
+                {
+                  "size": 16,
+                  "sourceLocation": "https://sample.test.net/agaves/testapps/app/home/icon32.png"
+                },
+                {
+                  "size": 32,
+                  "sourceLocation": "https://sample.test.net/agaves/testapps/app/home/icon32.png"
+                },
+                {
+                  "size": 80,
+                  "sourceLocation": "https://sample.test.net/agaves/testapps/app/home/icon32.png"
+                }
+              ],
+              "items": [
+                {
+                  "type": "MenuItem",
+                  "id": "CtxMi111",
+                  "enabled": true,
+                  "icon": [
+                    {
+                      "size": 16,
+                      "sourceLocation": "https://sample.test.net/agaves/testapps/app/home/icon32.png"
+                    },
+                    {
+                      "size": 32,
+                      "sourceLocation": "https://sample.test.net/agaves/testapps/app/home/icon32.png"
+                    },
+                    {
+                      "size": 80,
+                      "sourceLocation": "https://sample.test.net/agaves/testapps/app/home/icon32.png"
+                    }
+                  ],
+                  "label": "STP_CtxMi111",
+                  "toolTip": "Btn111ToolTip",
+                  "superTip": {
+                    "title": "Btn111SupertTipeTitle",
+                    "description": "Btn111SuperTipDesc"
+                  },
+                  "actionId": "showTaskpaneSharedRuntime"
+                },
+                {
+                  "type": "MenuItem",
+                  "id": "CtxMi112",
+                  "enabled": false,
+                  "icon": [
+                    {
+                      "size": 16,
+                      "sourceLocation": "https://sample.test.net/agaves/testapps/app/home/icon32.png"
+                    },
+                    {
+                      "size": 32,
+                      "sourceLocation": "https://sample.test.net/agaves/testapps/app/home/icon32.png"
+                    },
+                    {
+                      "size": 80,
+                      "sourceLocation": "https://sample.test.net/agaves/testapps/app/home/icon32.png"
+                    }
+                  ],
+                  "label": "ExeFunc_CtxMi112",
+                  "toolTip": "Btn111ToolTip",
+                  "superTip": {
+                    "title": "Btn111SupertTipeTitle",
+                    "description": "Btn111SuperTipDesc"
+                  },
+                  "actionId": "ExecuteFunctionNoneSharedRuntime"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
