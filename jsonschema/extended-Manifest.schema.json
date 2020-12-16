@@ -6,7 +6,8 @@
     "properties": {
       "$schema": {
         "description": "The extended manifest JSON schema file.",
-        "type": "string"
+        "type": "string",
+        "maxLength": 256
       },
       "shortcuts": {
         "description": "The shortcuts of this Office Add-in.",
@@ -25,12 +26,17 @@
         "properties": {
             "default": {
                 "type": "object",
-                "additionalProperties": {"$ref": "#/definitions/resource"},
+                "patternProperties": {
+                    "[\\s\\S]*": {"$ref": "#/definitions/resource"}
+                },
+                "additionalProperties": false,
                 "minProperties":1
             }
-        }
+        },
+        "additionalProperties": false
       }
     },
+    "additionalProperties": false,
     "definitions": {
         "shortcut": {
             "title": "Shortcut",
@@ -41,18 +47,14 @@
                 "action": {
                     "title": "Action ID",
                     "description": "The action to be executed when this shortcut key combination is triggered.",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 256
                 },
                 "key": {
                     "title": "Key",
                     "description": "The key combination that triggers this shortcut action.",
                     "type": "object",
-                    "anyOf": [
-                        {"required": ["default"]},
-                        {"required": ["web"]},
-                        {"required": ["Win32"]},
-                        {"required": ["Mac"]}
-                    ],
+                    "maxLength": 256,
                     "properties": {
                         "default": {
                             "title": "Default Key Sequence",
@@ -66,9 +68,9 @@
                             "type": "string",
                             "pattern": "(^\\$\\{resource\\.([A-Za-z0-9_-]+)\\}$)|(^[A-Za-z0-9-_+]+$)"
                         },
-                        "win32": {
-                            "title": "Win32 Key Sequence",
-                            "description": "The key combination that triggers this shortcut action in the Win32 platform.",
+                        "windows": {
+                            "title": "Windows Key Sequence",
+                            "description": "The key combination that triggers this shortcut action in the Windows platform.",
                             "type": "string",
                             "pattern": "(^\\$\\{resource\\.([A-Za-z0-9_-]+)\\}$)|(^[A-Za-z0-9-_+]+$)"
                         },
@@ -78,33 +80,48 @@
                             "type": "string",
                             "pattern": "(^\\$\\{resource\\.([A-Za-z0-9_-]+)\\}$)|(^[A-Za-z0-9-_+]+$)"
                         }
-                    }
+                    },
+                    "additionalProperties": false,
+                    "minProperties":1
                 }
-            }
+            },
+            "additionalProperties": false
         },
         "action": {
             "title": "Action",
             "description": "Action.",
             "type": "object",
-            "required": ["ID"],
+            "required": ["id"],
             "properties": {
                 "id": {
                     "title": "Action Id",
                     "description": "The ID of the action.",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 256
                 },
                 "type": {
                     "title": "Action Type",
                     "description": "The type of the action.",
-                    "type": "string"
+                    "type": "string",
+                    "oneOf": [{
+                        "enum": [
+                            "Undefined",
+                            "MessageSendEvent",
+                            "ExecuteFunction",
+                            "ShowTaskpane"
+                        ]
+                    }],
+                    "maxLength": 16
                 },
                 "name": {
                     "title": "Action Name",
                     "description": "The name of the action.",
                     "type": "string",
-                    "pattern": "(^\\$\\{resource\\.([A-Za-z0-9_-]+)\\}$)|(^[A-Za-z0-9-_+]+$)"
+                    "pattern": "(^\\$\\{resource\\.([A-Za-z0-9_-]+)\\}$)|(^[A-Za-z0-9-_+]+$)",
+                    "maxLength": 256
                 }
-            }
+            },
+            "additionalProperties": false
         },
         "resource": {
             "title": "resource",
@@ -115,14 +132,17 @@
                 "value": {
                     "title": "Resource Value",
                     "description": "The value of the resource entry.",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 256
                 },
                 "comment": {
                     "title": "Resource Comment",
                     "description": "The comment of the resource entry.",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 2084
                 }
-            }
+            },
+            "additionalProperties": false
         }
     }
 }
