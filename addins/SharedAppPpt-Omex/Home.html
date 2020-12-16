@@ -8,14 +8,14 @@
 	<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
 
 	<script>
-		var visibilityChangedHandler = args => {
+		function visibilityChangedHandler(args) {
 			if (args.visibilityMode === "Taskpane")
 				document.getElementsByName('result')[0].value += "Event:Taskpane; ";
 			else if (args.visibilityMode === "Hidden")
 				document.getElementsByName('result')[0].value += "Event:Hidden; ";
 			else
 				document.getElementsByName('result')[0].value = "Invalid event; ";
-		};
+		}
 
 		// The testing data shared between taskpane and custom function
 		var g_sharedAppData = {};
@@ -29,37 +29,47 @@
 			g_sharedAppData.value = 2020;
 			event.completed();
 		}
-		async function registerVisibilityChangedEvent() {
-			await Office.addin.onVisibilityModeChanged(visibilityChangedHandler);
+		function registerVisibilityChangedEvent() {
+			Office.addin.onVisibilityModeChanged(visibilityChangedHandler);
 		}
-		async function getVisibleState() {
-			const state = await Office.addin._getState();
-			document.getElementsByName('result')[0].value += "State:" + state + "; ";
+		function getVisibleState() {
+			var state = Office.addin._getState();
+			state.then(function(result) {
+				document.getElementsByName('result')[0].value += "State:" + result + "; ";
+			});
 		}
-		async function setHiddenThenVisible() {
-			await Office.addin.hide();
-			await getVisibleState();
-			await Office.addin.showAsTaskpane();
-			await getVisibleState();
+		function setHiddenThenVisible() {
+			Office.addin.hide().then(function() {
+				getVisibleState();
+			}).then(function() {
+				Office.addin.showAsTaskpane();
+			}).then(function() {
+				getVisibleState();
+			});
 		}
-		async function getStartBehavior() {
-			const state = await Office.addin.getStartupBehavior();
-			document.getElementsByName('result')[0].value += "Start:" + state + "; ";
+		function getStartBehavior() {
+			var state = Office.addin.getStartupBehavior();
+			state.then(function(result) {
+				document.getElementsByName('result')[0].value += "Start:" + result + "; ";
+			});
 		}
-		async function setStartBehaviorLoad() {
-			await Office.addin.setStartupBehavior(Office.StartupBehavior.load);
-			await getStartBehavior();
+		function setStartBehaviorLoad() {
+			Office.addin.setStartupBehavior(Office.StartupBehavior.load).then(function() {
+				getStartBehavior();
+			});
 		}
-		async function setStartBehaviorNone() {
-			await Office.addin.setStartupBehavior(Office.StartupBehavior.none);
-			await getStartBehavior();
+		function setStartBehaviorNone() {
+			Office.addin.setStartupBehavior(Office.StartupBehavior.none).then(function() {
+				getStartBehavior();
+			});
 		}
-		async function getSetting() {
+		function getSetting() {
 			document.getElementsByName('result')[0].value += "mySetting=" + Office.context.document.settings.get("mySetting") + "; ";
 		}
-		async function setSetting() {
-			await Office.context.document.settings.set("mySetting", "mySetting value");
-			await getSetting();
+		function setSetting() {
+			Office.context.document.settings.set("mySetting", "mySetting value").then(function() {
+				getSetting();
+			});
 		}
 	</script>
 	<script>
