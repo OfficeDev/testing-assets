@@ -6,7 +6,8 @@
     "properties": {
         "$schema": {
             "description": "The extended manifest resources json schema file.",
-            "type": "string"
+            "type": "string",
+            "maxLength": 256
         }
     },
     "additionalProperties": {"$ref": "#/definitions/resource"},
@@ -21,14 +22,17 @@
                 "value": {
                     "title": "Resource Value",
                     "description": "The value of the resource entry.",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 256
                 },
                 "comment": {
                     "title": "Resource Comment",
                     "description": "The comment of the resource entry.",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 2084
                 }
-            }
+            },
+            "additionalProperties": false
         }
     }
 }
