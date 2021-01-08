@@ -1675,6 +1675,9 @@ var OSF;
                     throw OSF.Utility.createNotImplementedException();
                 }
             }
+            else if (_hostInfo.hostPlatform === OSF.HostInfoPlatform.android) {
+                _initializationHelper = new OSF.WebViewInitializationHelper(_hostInfo, _webAppState, null, null);
+            }
             else {
                 console.warn("Office.js is loaded inside in unknown host or platform " + _hostInfo.hostPlatform);
             }
@@ -5731,6 +5734,424 @@ var OSFWebkit;
         }());
     })(ScriptMessaging = OSFWebkit.ScriptMessaging || (OSFWebkit.ScriptMessaging = {}));
 })(OSFWebkit || (OSFWebkit = {}));
+var OSF;
+(function (OSF) {
+    var WebView;
+    (function (WebView) {
+        WebView.MessageHandlerName = "Agave";
+        WebView.PopupMessageHandlerName = "WefPopupHandler";
+        var AppContextProperties;
+        (function (AppContextProperties) {
+            AppContextProperties[AppContextProperties["Settings"] = 0] = "Settings";
+            AppContextProperties[AppContextProperties["SolutionReferenceId"] = 1] = "SolutionReferenceId";
+            AppContextProperties[AppContextProperties["AppType"] = 2] = "AppType";
+            AppContextProperties[AppContextProperties["MajorVersion"] = 3] = "MajorVersion";
+            AppContextProperties[AppContextProperties["MinorVersion"] = 4] = "MinorVersion";
+            AppContextProperties[AppContextProperties["RevisionVersion"] = 5] = "RevisionVersion";
+            AppContextProperties[AppContextProperties["APIVersionSequence"] = 6] = "APIVersionSequence";
+            AppContextProperties[AppContextProperties["AppCapabilities"] = 7] = "AppCapabilities";
+            AppContextProperties[AppContextProperties["APPUILocale"] = 8] = "APPUILocale";
+            AppContextProperties[AppContextProperties["AppDataLocale"] = 9] = "AppDataLocale";
+            AppContextProperties[AppContextProperties["BindingCount"] = 10] = "BindingCount";
+            AppContextProperties[AppContextProperties["DocumentUrl"] = 11] = "DocumentUrl";
+            AppContextProperties[AppContextProperties["ActivationMode"] = 12] = "ActivationMode";
+            AppContextProperties[AppContextProperties["ControlIntegrationLevel"] = 13] = "ControlIntegrationLevel";
+            AppContextProperties[AppContextProperties["SolutionToken"] = 14] = "SolutionToken";
+            AppContextProperties[AppContextProperties["APISetVersion"] = 15] = "APISetVersion";
+            AppContextProperties[AppContextProperties["CorrelationId"] = 16] = "CorrelationId";
+            AppContextProperties[AppContextProperties["InstanceId"] = 17] = "InstanceId";
+            AppContextProperties[AppContextProperties["TouchEnabled"] = 18] = "TouchEnabled";
+            AppContextProperties[AppContextProperties["CommerceAllowed"] = 19] = "CommerceAllowed";
+            AppContextProperties[AppContextProperties["RequirementMatrix"] = 20] = "RequirementMatrix";
+            AppContextProperties[AppContextProperties["HostCustomMessage"] = 21] = "HostCustomMessage";
+            AppContextProperties[AppContextProperties["HostFullVersion"] = 22] = "HostFullVersion";
+            AppContextProperties[AppContextProperties["InitialDisplayMode"] = 23] = "InitialDisplayMode";
+        })(AppContextProperties = WebView.AppContextProperties || (WebView.AppContextProperties = {}));
+        var MethodId;
+        (function (MethodId) {
+            MethodId[MethodId["Execute"] = 1] = "Execute";
+            MethodId[MethodId["RegisterEvent"] = 2] = "RegisterEvent";
+            MethodId[MethodId["UnregisterEvent"] = 3] = "UnregisterEvent";
+            MethodId[MethodId["WriteSettings"] = 4] = "WriteSettings";
+            MethodId[MethodId["GetContext"] = 5] = "GetContext";
+            MethodId[MethodId["OnKeydown"] = 6] = "OnKeydown";
+            MethodId[MethodId["AddinInitialized"] = 7] = "AddinInitialized";
+            MethodId[MethodId["OpenWindow"] = 8] = "OpenWindow";
+            MethodId[MethodId["MessageParent"] = 9] = "MessageParent";
+            MethodId[MethodId["SendMessage"] = 10] = "SendMessage";
+        })(MethodId = WebView.MethodId || (WebView.MethodId = {}));
+        var WebViewHostController = (function () {
+            function WebViewHostController(hostScriptProxy) {
+                this.hostScriptProxy = hostScriptProxy;
+            }
+            WebViewHostController.prototype.execute = function (id, params, callback) {
+                var args = params;
+                if (args == null) {
+                    args = [];
+                }
+                var hostParams = {
+                    id: id,
+                    apiArgs: args
+                };
+                var agaveResponseCallback = function (payload) {
+                    var safeArraySource = payload;
+                    if (OSF.OUtil.isArray(payload) && payload.length >= 2) {
+                        var hrStatus = payload[0];
+                        safeArraySource = payload[1];
+                    }
+                    if (callback) {
+                        return callback(new OSF.WebViewSafeArray(safeArraySource));
+                    }
+                };
+                this.hostScriptProxy.invokeMethod(OSF.WebView.MessageHandlerName, OSF.WebView.MethodId.Execute, hostParams, agaveResponseCallback);
+            };
+            WebViewHostController.prototype.registerEvent = function (id, eventType, targetId, handler, callback) {
+                throw OSF.Utility.createNotImplementedException();
+            };
+            WebViewHostController.prototype.unregisterEvent = function (id, eventType, targetId, callback) {
+                throw OSF.Utility.createNotImplementedException();
+            };
+            WebViewHostController.prototype.messageParent = function (params) {
+                throw OSF.Utility.createNotImplementedException();
+            };
+            WebViewHostController.prototype.openDialog = function (id, eventType, targetId, handler, callback) {
+                throw OSF.Utility.createNotImplementedException();
+            };
+            WebViewHostController.prototype.closeDialog = function (id, eventType, targetId, callback) {
+                throw OSF.Utility.createNotImplementedException();
+            };
+            WebViewHostController.prototype.sendMessage = function (params) {
+                throw OSF.Utility.createNotImplementedException();
+            };
+            return WebViewHostController;
+        }());
+        WebView.WebViewHostController = WebViewHostController;
+    })(WebView = OSF.WebView || (OSF.WebView = {}));
+})(OSF || (OSF = {}));
+var OSF;
+(function (OSF) {
+    var WebViewInitializationHelper = (function (_super) {
+        __extends(WebViewInitializationHelper, _super);
+        function WebViewInitializationHelper(hostInfo, webAppState, context, hostFacade) {
+            var _this = _super.call(this, hostInfo, webAppState, context, hostFacade) || this;
+            _this.initializeWebViewMessaging();
+            return _this;
+        }
+        WebViewInitializationHelper.prototype.initializeWebViewMessaging = function () {
+            OSF.ScriptMessaging = OSFWebView.ScriptMessaging;
+        };
+        WebViewInitializationHelper.prototype.getAppContext = function (wnd, onSuccess, onError) {
+            var _this = this;
+            var getInvocationCallback = function (appContext) {
+                var returnedContext;
+                var appContextProperties = OSF.Webkit.AppContextProperties;
+                var appType = appContext[appContextProperties.AppType];
+                var hostSettings = appContext[appContextProperties.Settings];
+                _this._serializedSettings = {};
+                var keys = hostSettings[0];
+                var values = hostSettings[1];
+                for (var index = 0; index < keys.length; index++) {
+                    _this._serializedSettings[keys[index]] = values[index];
+                }
+                var id = appContext[appContextProperties.SolutionReferenceId];
+                var version = appContext[appContextProperties.MajorVersion];
+                var minorVersion = appContext[appContextProperties.MinorVersion];
+                var clientMode = appContext[appContextProperties.AppCapabilities];
+                var UILocale = appContext[appContextProperties.APPUILocale];
+                var dataLocale = appContext[appContextProperties.AppDataLocale];
+                var docUrl = appContext[appContextProperties.DocumentUrl];
+                var reason = appContext[appContextProperties.ActivationMode];
+                var osfControlType = appContext[appContextProperties.ControlIntegrationLevel];
+                var eToken = appContext[appContextProperties.SolutionToken];
+                eToken = eToken ? eToken.toString() : "";
+                var correlationId = appContext[appContextProperties.CorrelationId];
+                var appInstanceId = appContext[appContextProperties.InstanceId];
+                var touchEnabled = appContext[appContextProperties.TouchEnabled];
+                var commerceAllowed = appContext[appContextProperties.CommerceAllowed];
+                var requirementMatrix = appContext[appContextProperties.RequirementMatrix];
+                var hostCustomMessage = appContext[appContextProperties.HostCustomMessage];
+                var hostFullVersion = appContext[appContextProperties.HostFullVersion];
+                var initialDisplayMode = appContext[appContextProperties.InitialDisplayMode];
+                var settingsFunc = function () {
+                    return _this._serializedSettings;
+                };
+                returnedContext = new OSF.OfficeAppContext(id, appType, version, UILocale, dataLocale, docUrl, clientMode, settingsFunc, reason, osfControlType, eToken, correlationId, appInstanceId, touchEnabled, commerceAllowed, minorVersion, requirementMatrix, hostCustomMessage, hostFullVersion, undefined, undefined, undefined, undefined, undefined, undefined, undefined, initialDisplayMode, undefined);
+                onSuccess(returnedContext);
+            };
+            var handler;
+            if (this._hostInfo.isDialog) {
+                handler = OSF.WebView.PopupMessageHandlerName;
+            }
+            else {
+                handler = OSF.WebView.MessageHandlerName;
+            }
+            OSF.ScriptMessaging.GetScriptMessenger().invokeMethod(handler, OSF.WebView.MethodId.GetContext, [], getInvocationCallback);
+        };
+        WebViewInitializationHelper.prototype.createClientHostController = function () {
+            if (!this._clientHostController) {
+                this._clientHostController = new OSF.WebView.WebViewHostController(OSF.ScriptMessaging.GetScriptMessenger());
+            }
+            return this._clientHostController;
+        };
+        WebViewInitializationHelper.prototype.createAsyncMethodExecutor = function () {
+            return new OSF.SafeArrayAsyncMethodExecutor(this.createClientHostController());
+        };
+        WebViewInitializationHelper.prototype.createClientSettingsManager = function () {
+            throw OSF.Utility.createNotImplementedException();
+        };
+        return WebViewInitializationHelper;
+    }(OSF.InitializationHelper));
+    OSF.WebViewInitializationHelper = WebViewInitializationHelper;
+})(OSF || (OSF = {}));
+var CrossIFrameCommon;
+(function (CrossIFrameCommon) {
+    var CallbackType;
+    (function (CallbackType) {
+        CallbackType[CallbackType["MethodCallback"] = 0] = "MethodCallback";
+        CallbackType[CallbackType["EventCallback"] = 1] = "EventCallback";
+    })(CallbackType = CrossIFrameCommon.CallbackType || (CrossIFrameCommon.CallbackType = {}));
+    var CallbackData = (function () {
+        function CallbackData(callbackType, callbackId, params) {
+            this.callbackType = callbackType;
+            this.callbackId = callbackId;
+            this.params = params;
+        }
+        return CallbackData;
+    }());
+    CrossIFrameCommon.CallbackData = CallbackData;
+})(CrossIFrameCommon || (CrossIFrameCommon = {}));
+var OSF;
+(function (OSF) {
+    var AndroidPoster = (function () {
+        function AndroidPoster() {
+        }
+        AndroidPoster.getInstance = function () {
+            if (AndroidPoster.uniqueInstance == null) {
+                AndroidPoster.uniqueInstance = new AndroidPoster();
+            }
+            return AndroidPoster.uniqueInstance;
+        };
+        AndroidPoster.prototype.postMessage = function (handlerName, message) {
+            agaveHost.postMessage(message);
+        };
+        AndroidPoster.prototype.ReceiveMessage = function (cbData) {
+            switch (cbData.callbackType) {
+                case CrossIFrameCommon.CallbackType.MethodCallback:
+                    OSFWebView.ScriptMessaging.agaveHostCallback(cbData.callbackId, cbData.params);
+                    break;
+                case CrossIFrameCommon.CallbackType.EventCallback:
+                    OSFWebView.ScriptMessaging.agaveHostEventCallback(cbData.callbackId, cbData.params);
+                    break;
+                default:
+                    break;
+            }
+        };
+        return AndroidPoster;
+    }());
+    OSF.AndroidPoster = AndroidPoster;
+    var WebViewSafeArray = (function () {
+        function WebViewSafeArray(data) {
+            this.data = data;
+            this.safeArrayFlag = this.isSafeArray(data);
+        }
+        WebViewSafeArray.prototype.dimensions = function () {
+            var dimensions = 0;
+            if (this.safeArrayFlag) {
+                dimensions = this.data[0][0];
+            }
+            else if (this.isArray()) {
+                dimensions = 2;
+            }
+            return dimensions;
+        };
+        WebViewSafeArray.prototype.getItem = function () {
+            var array = [];
+            var element = null;
+            if (this.safeArrayFlag) {
+                array = this.toArray();
+            }
+            else {
+                array = this.data;
+            }
+            element = array;
+            for (var i = 0; i < arguments.length; i++) {
+                element = element[arguments[i]];
+            }
+            return element;
+        };
+        WebViewSafeArray.prototype.lbound = function (dimension) {
+            return 0;
+        };
+        WebViewSafeArray.prototype.ubound = function (dimension) {
+            var ubound = 0;
+            if (this.safeArrayFlag) {
+                ubound = this.data[0][dimension];
+            }
+            else if (this.isArray()) {
+                if (dimension == 1) {
+                    return this.data.length;
+                }
+                else if (dimension == 2) {
+                    if (OSF.OUtil.isArray(this.data[0])) {
+                        return this.data[0].length;
+                    }
+                    else if (this.data[0] != null) {
+                        return 1;
+                    }
+                }
+            }
+            return ubound;
+        };
+        WebViewSafeArray.prototype.toArray = function () {
+            if (this.isArray() == false) {
+                return this.data;
+            }
+            var arr = [];
+            var startingIndex = this.safeArrayFlag ? 1 : 0;
+            for (var i = startingIndex; i < this.data.length; i++) {
+                var element = this.data[i];
+                if (this.isSafeArray(element)) {
+                    arr.push(new WebViewSafeArray(element));
+                }
+                else {
+                    arr.push(element);
+                }
+            }
+            return arr;
+        };
+        WebViewSafeArray.prototype.isArray = function () {
+            return OSF.OUtil.isArray(this.data);
+        };
+        WebViewSafeArray.prototype.isSafeArray = function (obj) {
+            var isSafeArray = false;
+            if (OSF.OUtil.isArray(obj) && OSF.OUtil.isArray(obj[0])) {
+                var bounds = obj[0];
+                var dimensions = bounds[0];
+                if (bounds.length != dimensions + 1) {
+                    return false;
+                }
+                var expectedArraySize = 1;
+                for (var i = 1; i < bounds.length; i++) {
+                    var dimension = bounds[i];
+                    if (isFinite(dimension) == false) {
+                        return false;
+                    }
+                    expectedArraySize = expectedArraySize * dimension;
+                }
+                expectedArraySize++;
+                isSafeArray = (expectedArraySize == obj.length);
+            }
+            return isSafeArray;
+        };
+        return WebViewSafeArray;
+    }());
+    OSF.WebViewSafeArray = WebViewSafeArray;
+})(OSF || (OSF = {}));
+var OSFWebView;
+(function (OSFWebView) {
+    var ScriptMessaging;
+    (function (ScriptMessaging) {
+        var scriptMessenger = null;
+        function agaveHostCallback(callbackId, params) {
+            scriptMessenger.agaveHostCallback(callbackId, params);
+        }
+        ScriptMessaging.agaveHostCallback = agaveHostCallback;
+        function agaveHostEventCallback(callbackId, params) {
+            scriptMessenger.agaveHostEventCallback(callbackId, params);
+        }
+        ScriptMessaging.agaveHostEventCallback = agaveHostEventCallback;
+        function GetScriptMessenger() {
+            if (scriptMessenger == null) {
+                scriptMessenger = new WebViewScriptMessaging("OSF.ScriptMessaging.agaveHostCallback", "OSF.ScriptMessaging.agaveHostEventCallback", OSF.AndroidPoster.getInstance());
+            }
+            return scriptMessenger;
+        }
+        ScriptMessaging.GetScriptMessenger = GetScriptMessenger;
+        var EventHandlerCallback = (function () {
+            function EventHandlerCallback(id, targetId, handler) {
+                this.id = id;
+                this.targetId = targetId;
+                this.handler = handler;
+            }
+            return EventHandlerCallback;
+        }());
+        var WebViewScriptMessaging = (function () {
+            function WebViewScriptMessaging(methodCallbackName, eventCallbackName, messagePoster) {
+                this.callingIndex = 0;
+                this.callbackList = {};
+                this.eventHandlerList = {};
+                this.asyncMethodCallbackFunctionName = methodCallbackName;
+                this.eventCallbackFunctionName = eventCallbackName;
+                this.poster = messagePoster;
+                this.conversationId = WebViewScriptMessaging.getCurrentTimeMS().toString();
+            }
+            WebViewScriptMessaging.prototype.invokeMethod = function (handlerName, methodId, params, callback) {
+                var messagingArgs = {};
+                this.postMessage(messagingArgs, handlerName, methodId, params, callback);
+            };
+            WebViewScriptMessaging.prototype.registerEvent = function (handlerName, methodId, dispId, targetId, handler, callback) {
+                var messagingArgs = {
+                    eventCallbackFunction: this.eventCallbackFunctionName
+                };
+                var hostArgs = {
+                    id: dispId,
+                    targetId: targetId
+                };
+                var correlationId = this.postMessage(messagingArgs, handlerName, methodId, hostArgs, callback);
+                this.eventHandlerList[correlationId] = new EventHandlerCallback(dispId, targetId, handler);
+            };
+            WebViewScriptMessaging.prototype.unregisterEvent = function (handlerName, methodId, dispId, targetId, callback) {
+                var hostArgs = {
+                    id: dispId,
+                    targetId: targetId
+                };
+                for (var key in this.eventHandlerList) {
+                    if (this.eventHandlerList.hasOwnProperty(key)) {
+                        var eventCallback = this.eventHandlerList[key];
+                        if (eventCallback.id == dispId && eventCallback.targetId == targetId) {
+                            delete this.eventHandlerList[key];
+                        }
+                    }
+                }
+                this.invokeMethod(handlerName, methodId, hostArgs, callback);
+            };
+            WebViewScriptMessaging.prototype.agaveHostCallback = function (callbackId, params) {
+                var callbackFunction = this.callbackList[callbackId];
+                if (callbackFunction) {
+                    var callbacksDone = callbackFunction(params);
+                    if (callbacksDone === undefined || callbacksDone === true) {
+                        delete this.callbackList[callbackId];
+                    }
+                }
+            };
+            WebViewScriptMessaging.prototype.agaveHostEventCallback = function (callbackId, params) {
+                var eventCallback = this.eventHandlerList[callbackId];
+                if (eventCallback) {
+                    eventCallback.handler(params);
+                }
+            };
+            WebViewScriptMessaging.prototype.postMessage = function (messagingArgs, handlerName, methodId, params, callback) {
+                var correlationId = this.generateCorrelationId();
+                this.callbackList[correlationId] = callback;
+                messagingArgs.methodId = methodId;
+                messagingArgs.params = params;
+                messagingArgs.callbackId = correlationId;
+                messagingArgs.callbackFunction = this.asyncMethodCallbackFunctionName;
+                this.poster.postMessage(handlerName, JSON.stringify(messagingArgs));
+                return correlationId;
+            };
+            WebViewScriptMessaging.prototype.generateCorrelationId = function () {
+                ++this.callingIndex;
+                return this.conversationId + this.callingIndex;
+            };
+            WebViewScriptMessaging.getCurrentTimeMS = function () {
+                return (new Date).getTime();
+            };
+            WebViewScriptMessaging.MESSAGE_TIME_DELTA = 10;
+            return WebViewScriptMessaging;
+        }());
+    })(ScriptMessaging = OSFWebView.ScriptMessaging || (OSFWebView.ScriptMessaging = {}));
+})(OSFWebView || (OSFWebView = {}));
 var OSF;
 (function (OSF) {
     var Win32RichClientHostController = (function (_super) {
