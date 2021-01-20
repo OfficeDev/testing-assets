@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xsi:type="MailApp">
+  <Id>f123a74d-3972-4344-8837-80091ffef605</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Contoso</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="bundle API Test"/>
+  <Description DefaultValue="bundle API Test"/>
+  <IconUrl DefaultValue="https://officedev.github.io/testing-assets/addins/images/button80x80.png"/>
+  <HighResolutionIconUrl DefaultValue="https://officedev.github.io/testing-assets/addins/images/button80x80.png"/>
+  <SupportUrl DefaultValue="https://contoso.com/help"/>
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://officedev.github.io/testing-assets/addins/outlook/Home_olk.html"></SourceLocation>
+        <RequestedHeight>32</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+
+  <Permissions>ReadWriteMailbox</Permissions>
+
+  <Rule xsi:type="RuleCollection" Mode="And">
+    <Rule xsi:type="ItemIs" ItemType="Appointment" FormType="Read"/>
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+  </Rule>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Description resid="residLabel"></Description>
+    <Requirements>
+      <bt:Sets>
+        <bt:Set Name="Mailbox" MinVersion="1.3"/>
+      </bt:Sets>
+    </Requirements>
+    <Hosts>
+      <Host xsi:type="MailHost">
+        <DesktopFormFactor>
+          <ExtensionPoint xsi:type="MessageReadCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="msgReadGroup">
+                <Label resid="residLabel"/>
+                <Control xsi:type="Button" id="msgRead">
+                  <Label resid="residLabel"/>
+                  <Supertip>
+                    <Title resid="residLabel"/>
+                    <Description resid="residTooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon-16"/>
+                    <bt:Image size="32" resid="icon-32"/>
+                    <bt:Image size="80" resid="icon-80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="residTaskPane"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+          <ExtensionPoint xsi:type="MessageComposeCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="msgComposeGroup">
+                <Label resid="residLabel"/>
+                <Control xsi:type="Button" id="msgCompose">
+                  <Label resid="residLabel"/>
+                  <Supertip>
+                    <Title resid="residLabel"/>
+                    <Description resid="residTooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon-16"/>
+                    <bt:Image size="32" resid="icon-32"/>
+                    <bt:Image size="80" resid="icon-80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="residTaskPane"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+          <ExtensionPoint xsi:type="AppointmentOrganizerCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="apptOrganizerGroup">
+                <Label resid="residLabel"/>
+                <Control xsi:type="Button" id="apptOrganizer">
+                  <Label resid="residLabel"/>
+                  <Supertip>
+                    <Title resid="residLabel"/>
+                    <Description resid="residTooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon-16"/>
+                    <bt:Image size="32" resid="icon-32"/>
+                    <bt:Image size="80" resid="icon-80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="residTaskPane"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+          <ExtensionPoint xsi:type="AppointmentAttendeeCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="apptAttendeeGroup">
+                <Label resid="residLabel"/>
+                <Control xsi:type="Button" id="apptAttendee">
+                  <Label resid="residLabel"/>
+                  <Supertip>
+                    <Title resid="residLabel"/>
+                    <Description resid="residTooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon-16"/>
+                    <bt:Image size="32" resid="icon-32"/>
+                    <bt:Image size="80" resid="icon-80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="residTaskPane"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    <Resources>
+      <bt:Images>
+        <bt:Image id="icon-16" DefaultValue="https://officedev.github.io/testing-assets/addins/images/button16x16.png"/>
+        <bt:Image id="icon-32" DefaultValue="https://officedev.github.io/testing-assets/addins/images/button32x32.png"/>
+        <bt:Image id="icon-80" DefaultValue="https://officedev.github.io/testing-assets/addins/images/button80x80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="residTaskPane" DefaultValue="https://officedev.github.io/testing-assets/addins/outlook/Home_olk.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="residLabel" DefaultValue="API Test"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="residTooltip" DefaultValue="API Test"/>
+      </bt:LongStrings>
+    </Resources>
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
+      <Description resid="residLabel"></Description>
+      <Requirements>
+        <bt:Sets>
+          <bt:Set Name="Mailbox" MinVersion="1.3"/>
+        </bt:Sets>
+      </Requirements>
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <DesktopFormFactor>
+            <ExtensionPoint xsi:type="MessageReadCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="msgReadGroup">
+                  <Label resid="residLabel"/>
+                  <Control xsi:type="Button" id="msgRead">
+                    <Label resid="residLabel"/>
+                    <Supertip>
+                      <Title resid="residLabel"/>
+                      <Description resid="residTooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="icon-16"/>
+                      <bt:Image size="32" resid="icon-32"/>
+                      <bt:Image size="80" resid="icon-80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="residTaskPane"/>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+            <ExtensionPoint xsi:type="MessageComposeCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="msgComposeGroup">
+                  <Label resid="residLabel"/>
+                  <Control xsi:type="Button" id="msgCompose">
+                    <Label resid="residLabel"/>
+                    <Supertip>
+                      <Title resid="residLabel"/>
+                      <Description resid="residTooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="icon-16"/>
+                      <bt:Image size="32" resid="icon-32"/>
+                      <bt:Image size="80" resid="icon-80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="residTaskPane"/>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+            <ExtensionPoint xsi:type="AppointmentOrganizerCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="apptOrganizerGroup">
+                  <Label resid="residLabel"/>
+                  <Control xsi:type="Button" id="apptOrganizer">
+                    <Label resid="residLabel"/>
+                    <Supertip>
+                      <Title resid="residLabel"/>
+                      <Description resid="residTooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="icon-16"/>
+                      <bt:Image size="32" resid="icon-32"/>
+                      <bt:Image size="80" resid="icon-80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="residTaskPane"/>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+            <ExtensionPoint xsi:type="AppointmentAttendeeCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="apptAttendeeGroup">
+                  <Label resid="residLabel"/>
+                  <Control xsi:type="Button" id="apptAttendee">
+                    <Label resid="residLabel"/>
+                    <Supertip>
+                      <Title resid="residLabel"/>
+                      <Description resid="residTooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="icon-16"/>
+                      <bt:Image size="32" resid="icon-32"/>
+                      <bt:Image size="80" resid="icon-80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="residTaskPane"/>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+          </DesktopFormFactor>
+
+          <MobileFormFactor>
+            <FunctionFile resid="residFunctionFile"/>
+            <ExtensionPoint xsi:type="MobileMessageReadCommandSurface">
+              <Group id="mobMsgReadGroup">
+                <Label resid="residLabel"/>
+                <Control xsi:type="MobileButton" id="mobMsgRead">
+                  <Label resid="residLabel"/>
+                  <Icon>
+                    <bt:Image size="25" scale="1" resid="icon-16"/>
+                    <bt:Image size="25" scale="2" resid="icon-16"/>
+                    <bt:Image size="25" scale="3" resid="icon-16"/>
+
+                    <bt:Image size="32" scale="1" resid="icon-32"/>
+                    <bt:Image size="32" scale="2" resid="icon-32"/>
+                    <bt:Image size="32" scale="3" resid="icon-32"/>
+
+                    <bt:Image size="48" scale="1" resid="icon-80"/>
+                    <bt:Image size="48" scale="2" resid="icon-80"/>
+                    <bt:Image size="48" scale="3" resid="icon-80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="residTaskPane"/>
+                  </Action>
+                </Control>
+              </Group>
+            </ExtensionPoint>
+            <ExtensionPoint xsi:type="MobileOnlineMeetingCommandSurface">
+              <Control xsi:type="MobileButton" id="insertMeetingButton">
+                <Label resid="residMeetingLabel"/>
+                <Icon>
+                  <bt:Image size="25" scale="1" resid="mob-icon-24"/>
+                  <bt:Image size="25" scale="2" resid="mob-icon-24"/>
+                  <bt:Image size="25" scale="3" resid="mob-icon-24"/>
+
+                  <bt:Image size="32" scale="1" resid="mob-icon-32"/>
+                  <bt:Image size="32" scale="2" resid="mob-icon-32"/>
+                  <bt:Image size="32" scale="3" resid="mob-icon-32"/>
+
+                  <bt:Image size="48" scale="1" resid="mob-icon-48"/>
+                  <bt:Image size="48" scale="2" resid="mob-icon-48"/>
+                  <bt:Image size="48" scale="3" resid="mob-icon-48"/>
+                </Icon>
+                <Action xsi:type="ExecuteFunction">
+                  <FunctionName>insertOnlineMeeting</FunctionName>
+                </Action>
+              </Control>
+            </ExtensionPoint>
+          </MobileFormFactor>
+        </Host>
+      </Hosts>
+      <Resources>
+        <bt:Images>
+          <bt:Image id="icon-16" DefaultValue="https://officedev.github.io/testing-assets/addins/images/button16x16.png"/>
+          <bt:Image id="icon-32" DefaultValue="https://officedev.github.io/testing-assets/addins/images/button32x32.png"/>
+          <bt:Image id="icon-80" DefaultValue="https://officedev.github.io/testing-assets/addins/images/button80x80.png"/>
+          <bt:Image id="mob-icon-24" DefaultValue="https://officedev.github.io/testing-assets/addins/images/button32x32.png"/>
+          <bt:Image id="mob-icon-32" DefaultValue="https://officedev.github.io/testing-assets/addins/images/button32x32.png"/>
+          <bt:Image id="mob-icon-48" DefaultValue="https://officedev.github.io/testing-assets/addins/images/button80x80.png"/>
+        </bt:Images>
+        <bt:Urls>
+          <bt:Url id="residTaskPane" DefaultValue="https://officedev.github.io/testing-assets/addins/outlook/Home_olk.html"/>
+          <bt:Url id="residFunctionFile" DefaultValue="https://officedev.github.io/testing-assets/addins/outlook/Home_olk.html"/>
+        </bt:Urls>
+        <bt:ShortStrings>
+          <bt:String id="residLabel" DefaultValue="API Test"/>
+          <bt:String id="residMeetingLabel" DefaultValue="Test meeting"/>
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="residTooltip" DefaultValue="API Test"/>
+        </bt:LongStrings>
+      </Resources>
+    </VersionOverrides>
+  </VersionOverrides>
+</OfficeApp>
