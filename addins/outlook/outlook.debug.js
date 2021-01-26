@@ -1549,6 +1549,15 @@ var OSF;
                 });
                 notifyHostOfficeReady();
                 onSuccess(officeAppContext);
+                OSF.OUtil.ensureOfficeStringsJs().then(function () {
+                    if (_OfficeAppFactory.getHostInfo().hostType === "outlook") {
+                        _OfficeAppFactory.getInitializationHelper().loadAppSpecificScriptAndCreateOM(officeAppContext, function () {
+                            console.log("callback called;");
+                        });
+                    }
+                }).catch(function (ex) {
+                    console.error(ex);
+                });
             };
             var onGetAppContextError = function (e) {
                 onError(e);
@@ -5736,6 +5745,51 @@ var OSFWebkit;
 })(OSFWebkit || (OSFWebkit = {}));
 var OSF;
 (function (OSF) {
+    var WebViewClientSettingsManager = (function () {
+        function WebViewClientSettingsManager(_initializationHelper, _scriptMessager) {
+            this._initializationHelper = _initializationHelper;
+            this._scriptMessager = _scriptMessager;
+        }
+        WebViewClientSettingsManager.prototype.read = function (onComplete) {
+            var keys = [];
+            var values = [];
+            var initializationHelper = this._initializationHelper;
+            var onGetAppContextSuccess = function (appContext) {
+                if (onComplete) {
+                    var serializedSettings = appContext.get_settingsFunc()();
+                    onComplete(0, serializedSettings);
+                }
+            };
+            var onGetAppContextError = function (e) {
+                if (onComplete) {
+                    onComplete(5001, {});
+                }
+            };
+            initializationHelper.getAppContext(null, onGetAppContextSuccess, onGetAppContextError);
+        };
+        WebViewClientSettingsManager.prototype.write = function (serializedSettings, onComplete) {
+            var hostParams = {};
+            var keys = [];
+            var values = [];
+            for (var key in serializedSettings) {
+                keys.push(key);
+                values.push(serializedSettings[key]);
+            }
+            hostParams["keys"] = keys;
+            hostParams["values"] = values;
+            var onWriteCompleted = function onWriteCompleted(status) {
+                if (onComplete) {
+                    onComplete(status[0]);
+                }
+            };
+            this._scriptMessager.invokeMethod(OSF.WebView.MessageHandlerName, OSF.WebView.MethodId.WriteSettings, hostParams, onWriteCompleted);
+        };
+        return WebViewClientSettingsManager;
+    }());
+    OSF.WebViewClientSettingsManager = WebViewClientSettingsManager;
+})(OSF || (OSF = {}));
+var OSF;
+(function (OSF) {
     var WebView;
     (function (WebView) {
         WebView.MessageHandlerName = "Agave";
@@ -5763,9 +5817,7 @@ var OSF;
             AppContextProperties[AppContextProperties["TouchEnabled"] = 18] = "TouchEnabled";
             AppContextProperties[AppContextProperties["CommerceAllowed"] = 19] = "CommerceAllowed";
             AppContextProperties[AppContextProperties["RequirementMatrix"] = 20] = "RequirementMatrix";
-            AppContextProperties[AppContextProperties["HostCustomMessage"] = 21] = "HostCustomMessage";
-            AppContextProperties[AppContextProperties["HostFullVersion"] = 22] = "HostFullVersion";
-            AppContextProperties[AppContextProperties["InitialDisplayMode"] = 23] = "InitialDisplayMode";
+            AppContextProperties[AppContextProperties["OfficeThemeInfo"] = 21] = "OfficeThemeInfo";
         })(AppContextProperties = WebView.AppContextProperties || (WebView.AppContextProperties = {}));
         var MethodId;
         (function (MethodId) {
@@ -5800,28 +5852,105 @@ var OSF;
                         safeArraySource = payload[1];
                     }
                     if (callback) {
-                        return callback(new OSF.WebViewSafeArray(safeArraySource));
+                        return callback(new OSF.WebkitSafeArray(safeArraySource));
                     }
                 };
                 this.hostScriptProxy.invokeMethod(OSF.WebView.MessageHandlerName, OSF.WebView.MethodId.Execute, hostParams, agaveResponseCallback);
             };
             WebViewHostController.prototype.registerEvent = function (id, eventType, targetId, handler, callback) {
-                throw OSF.Utility.createNotImplementedException();
+                var agaveEventHandlerCallback = function (payload) {
+                    var safeArraySource = payload;
+                    var eventId = 0;
+                    if (OSF.OUtil.isArray(payload) && payload.length >= 2) {
+                        eventId = payload[0];
+                        safeArraySource = payload[1];
+                    }
+                    if (handler) {
+                        handler(eventId, new OSF.WebkitSafeArray(safeArraySource));
+                    }
+                };
+                var agaveResponseCallback = function (payload) {
+                    if (callback) {
+                        return callback(new OSF.WebkitSafeArray(payload));
+                    }
+                };
+                this.hostScriptProxy.registerEvent(OSF.WebView.MessageHandlerName, OSF.WebView.MethodId.RegisterEvent, id, targetId, agaveEventHandlerCallback, agaveResponseCallback);
             };
             WebViewHostController.prototype.unregisterEvent = function (id, eventType, targetId, callback) {
-                throw OSF.Utility.createNotImplementedException();
+                var agaveResponseCallback = function (response) {
+                    return callback(new OSF.WebkitSafeArray(response));
+                };
+                this.hostScriptProxy.unregisterEvent(OSF.WebView.MessageHandlerName, OSF.WebView.MethodId.UnregisterEvent, id, targetId, agaveResponseCallback);
             };
             WebViewHostController.prototype.messageParent = function (params) {
-                throw OSF.Utility.createNotImplementedException();
+                var message = params[OSF.ParameterNames.MessageToParent];
+                var messageObj = { dialogMessage: { messageType: 0, messageContent: message } };
+                window.opener.postMessage(JSON.stringify(messageObj), window.location.origin);
             };
             WebViewHostController.prototype.openDialog = function (id, eventType, targetId, handler, callback) {
-                throw OSF.Utility.createNotImplementedException();
+                var magicWord = "action=displayDialog";
+                var callArgs = JSON.parse(targetId);
+                var callUrl = callArgs.url;
+                if (!callUrl) {
+                    return;
+                }
+                var fragmentSeparator = '#';
+                var urlParts = callUrl.split(fragmentSeparator);
+                var seperator = "?";
+                if (callUrl.indexOf("?") > -1) {
+                    seperator = "&";
+                }
+                var width = screen.width * callArgs.width / 100;
+                var height = screen.height * callArgs.height / 100;
+                var params = "width=" + width + ", height=" + height;
+                urlParts[0] = urlParts[0].concat(seperator).concat(magicWord);
+                var openUrl = urlParts.join(fragmentSeparator);
+                WebViewHostController.popup = window.open(openUrl, "", params);
+                function receiveMessage(event) {
+                    if (event.source == WebViewHostController.popup) {
+                        try {
+                            var messageObj = JSON.parse(event.data);
+                            if (messageObj.dialogMessage) {
+                                handler(id, [0, messageObj.dialogMessage.messageContent]);
+                            }
+                        }
+                        catch (e) {
+                            OSF.Utility.trace("messages received cannot be handled. Message:" + event.data);
+                        }
+                    }
+                }
+                window.addEventListener("message", receiveMessage);
+                var interval;
+                function checkWindowClose() {
+                    try {
+                        if (WebViewHostController.popup == null || WebViewHostController.popup.closed) {
+                            window.clearInterval(interval);
+                            handler(id, [12006]);
+                        }
+                    }
+                    catch (e) {
+                        OSF.Utility.trace("Error happened when popup window closed.");
+                    }
+                }
+                interval = window.setInterval(checkWindowClose, 1000);
+                callback(0);
             };
             WebViewHostController.prototype.closeDialog = function (id, eventType, targetId, callback) {
-                throw OSF.Utility.createNotImplementedException();
+                if (WebViewHostController.popup) {
+                    WebViewHostController.popup.close();
+                    WebViewHostController.popup = null;
+                    callback(0);
+                }
+                else {
+                    callback(5001);
+                }
             };
             WebViewHostController.prototype.sendMessage = function (params) {
-                throw OSF.Utility.createNotImplementedException();
+                var message = params[OSF.ParameterNames.MessageContent];
+                if (!isNaN(parseFloat(message)) && isFinite(message)) {
+                    message = message.toString();
+                }
+                this.hostScriptProxy.invokeMethod(OSF.WebView.MessageHandlerName, OSF.WebView.MethodId.SendMessage, message, null);
             };
             return WebViewHostController;
         }());
@@ -5838,7 +5967,7 @@ var OSF;
             return _this;
         }
         WebViewInitializationHelper.prototype.initializeWebViewMessaging = function () {
-            OSF.ScriptMessaging = OSFWebView.ScriptMessaging;
+            OSF.ScriptMessaging = OSF.WebView.ScriptMessaging;
         };
         WebViewInitializationHelper.prototype.getAppContext = function (wnd, onSuccess, onError) {
             var _this = this;
@@ -5897,261 +6026,160 @@ var OSF;
             return new OSF.SafeArrayAsyncMethodExecutor(this.createClientHostController());
         };
         WebViewInitializationHelper.prototype.createClientSettingsManager = function () {
-            throw OSF.Utility.createNotImplementedException();
+            return new OSF.WebViewClientSettingsManager(this, OSF.ScriptMessaging.GetScriptMessenger());
         };
         return WebViewInitializationHelper;
     }(OSF.InitializationHelper));
     OSF.WebViewInitializationHelper = WebViewInitializationHelper;
 })(OSF || (OSF = {}));
-var CrossIFrameCommon;
-(function (CrossIFrameCommon) {
-    var CallbackType;
-    (function (CallbackType) {
-        CallbackType[CallbackType["MethodCallback"] = 0] = "MethodCallback";
-        CallbackType[CallbackType["EventCallback"] = 1] = "EventCallback";
-    })(CallbackType = CrossIFrameCommon.CallbackType || (CrossIFrameCommon.CallbackType = {}));
-    var CallbackData = (function () {
-        function CallbackData(callbackType, callbackId, params) {
-            this.callbackType = callbackType;
-            this.callbackId = callbackId;
-            this.params = params;
-        }
-        return CallbackData;
-    }());
-    CrossIFrameCommon.CallbackData = CallbackData;
-})(CrossIFrameCommon || (CrossIFrameCommon = {}));
 var OSF;
 (function (OSF) {
-    var AndroidPoster = (function () {
-        function AndroidPoster() {
-        }
-        AndroidPoster.getInstance = function () {
-            if (AndroidPoster.uniqueInstance == null) {
-                AndroidPoster.uniqueInstance = new AndroidPoster();
+    var CrossIFrameCommon;
+    (function (CrossIFrameCommon) {
+        var CallbackType;
+        (function (CallbackType) {
+            CallbackType[CallbackType["MethodCallback"] = 0] = "MethodCallback";
+            CallbackType[CallbackType["EventCallback"] = 1] = "EventCallback";
+        })(CallbackType = CrossIFrameCommon.CallbackType || (CrossIFrameCommon.CallbackType = {}));
+    })(CrossIFrameCommon || (CrossIFrameCommon = {}));
+    var Android;
+    (function (Android) {
+        var Poster = (function () {
+            function Poster() {
             }
-            return AndroidPoster.uniqueInstance;
-        };
-        AndroidPoster.prototype.postMessage = function (handlerName, message) {
-            agaveHost.postMessage(message);
-        };
-        AndroidPoster.prototype.ReceiveMessage = function (cbData) {
-            switch (cbData.callbackType) {
-                case CrossIFrameCommon.CallbackType.MethodCallback:
-                    OSFWebView.ScriptMessaging.agaveHostCallback(cbData.callbackId, cbData.params);
-                    break;
-                case CrossIFrameCommon.CallbackType.EventCallback:
-                    OSFWebView.ScriptMessaging.agaveHostEventCallback(cbData.callbackId, cbData.params);
-                    break;
-                default:
-                    break;
-            }
-        };
-        return AndroidPoster;
-    }());
-    OSF.AndroidPoster = AndroidPoster;
-    var WebViewSafeArray = (function () {
-        function WebViewSafeArray(data) {
-            this.data = data;
-            this.safeArrayFlag = this.isSafeArray(data);
-        }
-        WebViewSafeArray.prototype.dimensions = function () {
-            var dimensions = 0;
-            if (this.safeArrayFlag) {
-                dimensions = this.data[0][0];
-            }
-            else if (this.isArray()) {
-                dimensions = 2;
-            }
-            return dimensions;
-        };
-        WebViewSafeArray.prototype.getItem = function () {
-            var array = [];
-            var element = null;
-            if (this.safeArrayFlag) {
-                array = this.toArray();
-            }
-            else {
-                array = this.data;
-            }
-            element = array;
-            for (var i = 0; i < arguments.length; i++) {
-                element = element[arguments[i]];
-            }
-            return element;
-        };
-        WebViewSafeArray.prototype.lbound = function (dimension) {
-            return 0;
-        };
-        WebViewSafeArray.prototype.ubound = function (dimension) {
-            var ubound = 0;
-            if (this.safeArrayFlag) {
-                ubound = this.data[0][dimension];
-            }
-            else if (this.isArray()) {
-                if (dimension == 1) {
-                    return this.data.length;
+            Poster.getInstance = function () {
+                if (Poster.uniqueInstance == null) {
+                    Poster.uniqueInstance = new Poster();
                 }
-                else if (dimension == 2) {
-                    if (OSF.OUtil.isArray(this.data[0])) {
-                        return this.data[0].length;
-                    }
-                    else if (this.data[0] != null) {
-                        return 1;
-                    }
+                return Poster.uniqueInstance;
+            };
+            Poster.prototype.postMessage = function (handlerName, message) {
+                agaveHost.postMessage(message);
+            };
+            Poster.prototype.ReceiveMessage = function (cbData) {
+                switch (cbData.callbackType) {
+                    case CrossIFrameCommon.CallbackType.MethodCallback:
+                        OSF.WebView.ScriptMessaging.agaveHostCallback(cbData.callbackId, cbData.params);
+                        break;
+                    case CrossIFrameCommon.CallbackType.EventCallback:
+                        OSF.WebView.ScriptMessaging.agaveHostEventCallback(cbData.callbackId, cbData.params);
+                        break;
+                    default:
+                        break;
                 }
-            }
-            return ubound;
-        };
-        WebViewSafeArray.prototype.toArray = function () {
-            if (this.isArray() == false) {
-                return this.data;
-            }
-            var arr = [];
-            var startingIndex = this.safeArrayFlag ? 1 : 0;
-            for (var i = startingIndex; i < this.data.length; i++) {
-                var element = this.data[i];
-                if (this.isSafeArray(element)) {
-                    arr.push(new WebViewSafeArray(element));
-                }
-                else {
-                    arr.push(element);
-                }
-            }
-            return arr;
-        };
-        WebViewSafeArray.prototype.isArray = function () {
-            return OSF.OUtil.isArray(this.data);
-        };
-        WebViewSafeArray.prototype.isSafeArray = function (obj) {
-            var isSafeArray = false;
-            if (OSF.OUtil.isArray(obj) && OSF.OUtil.isArray(obj[0])) {
-                var bounds = obj[0];
-                var dimensions = bounds[0];
-                if (bounds.length != dimensions + 1) {
-                    return false;
-                }
-                var expectedArraySize = 1;
-                for (var i = 1; i < bounds.length; i++) {
-                    var dimension = bounds[i];
-                    if (isFinite(dimension) == false) {
-                        return false;
-                    }
-                    expectedArraySize = expectedArraySize * dimension;
-                }
-                expectedArraySize++;
-                isSafeArray = (expectedArraySize == obj.length);
-            }
-            return isSafeArray;
-        };
-        return WebViewSafeArray;
-    }());
-    OSF.WebViewSafeArray = WebViewSafeArray;
-})(OSF || (OSF = {}));
-var OSFWebView;
-(function (OSFWebView) {
-    var ScriptMessaging;
-    (function (ScriptMessaging) {
-        var scriptMessenger = null;
-        function agaveHostCallback(callbackId, params) {
-            scriptMessenger.agaveHostCallback(callbackId, params);
-        }
-        ScriptMessaging.agaveHostCallback = agaveHostCallback;
-        function agaveHostEventCallback(callbackId, params) {
-            scriptMessenger.agaveHostEventCallback(callbackId, params);
-        }
-        ScriptMessaging.agaveHostEventCallback = agaveHostEventCallback;
-        function GetScriptMessenger() {
-            if (scriptMessenger == null) {
-                scriptMessenger = new WebViewScriptMessaging("OSF.ScriptMessaging.agaveHostCallback", "OSF.ScriptMessaging.agaveHostEventCallback", OSF.AndroidPoster.getInstance());
-            }
-            return scriptMessenger;
-        }
-        ScriptMessaging.GetScriptMessenger = GetScriptMessenger;
-        var EventHandlerCallback = (function () {
-            function EventHandlerCallback(id, targetId, handler) {
-                this.id = id;
-                this.targetId = targetId;
-                this.handler = handler;
-            }
-            return EventHandlerCallback;
+            };
+            return Poster;
         }());
-        var WebViewScriptMessaging = (function () {
-            function WebViewScriptMessaging(methodCallbackName, eventCallbackName, messagePoster) {
-                this.callingIndex = 0;
-                this.callbackList = {};
-                this.eventHandlerList = {};
-                this.asyncMethodCallbackFunctionName = methodCallbackName;
-                this.eventCallbackFunctionName = eventCallbackName;
-                this.poster = messagePoster;
-                this.conversationId = WebViewScriptMessaging.getCurrentTimeMS().toString();
+        Android.Poster = Poster;
+    })(Android = OSF.Android || (OSF.Android = {}));
+})(OSF || (OSF = {}));
+(function (OSF) {
+    var WebView;
+    (function (WebView) {
+        var ScriptMessaging;
+        (function (ScriptMessaging) {
+            var scriptMessenger = null;
+            function agaveHostCallback(callbackId, params) {
+                scriptMessenger.agaveHostCallback(callbackId, params);
             }
-            WebViewScriptMessaging.prototype.invokeMethod = function (handlerName, methodId, params, callback) {
-                var messagingArgs = {};
-                this.postMessage(messagingArgs, handlerName, methodId, params, callback);
-            };
-            WebViewScriptMessaging.prototype.registerEvent = function (handlerName, methodId, dispId, targetId, handler, callback) {
-                var messagingArgs = {
-                    eventCallbackFunction: this.eventCallbackFunctionName
+            ScriptMessaging.agaveHostCallback = agaveHostCallback;
+            function agaveHostEventCallback(callbackId, params) {
+                scriptMessenger.agaveHostEventCallback(callbackId, params);
+            }
+            ScriptMessaging.agaveHostEventCallback = agaveHostEventCallback;
+            function GetScriptMessenger() {
+                if (scriptMessenger == null) {
+                    scriptMessenger = new WebViewScriptMessaging("OSF.ScriptMessaging.agaveHostCallback", "OSF.ScriptMessaging.agaveHostEventCallback", OSF.Android.Poster.getInstance());
+                }
+                return scriptMessenger;
+            }
+            ScriptMessaging.GetScriptMessenger = GetScriptMessenger;
+            var EventHandlerCallback = (function () {
+                function EventHandlerCallback(id, targetId, handler) {
+                    this.id = id;
+                    this.targetId = targetId;
+                    this.handler = handler;
+                }
+                return EventHandlerCallback;
+            }());
+            var WebViewScriptMessaging = (function () {
+                function WebViewScriptMessaging(methodCallbackName, eventCallbackName, messagePoster) {
+                    this.callingIndex = 0;
+                    this.callbackList = {};
+                    this.eventHandlerList = {};
+                    this.asyncMethodCallbackFunctionName = methodCallbackName;
+                    this.eventCallbackFunctionName = eventCallbackName;
+                    this.poster = messagePoster;
+                    this.conversationId = WebViewScriptMessaging.getCurrentTimeMS().toString();
+                }
+                WebViewScriptMessaging.prototype.invokeMethod = function (handlerName, methodId, params, callback) {
+                    var messagingArgs = {};
+                    this.postMessage(messagingArgs, handlerName, methodId, params, callback);
                 };
-                var hostArgs = {
-                    id: dispId,
-                    targetId: targetId
+                WebViewScriptMessaging.prototype.registerEvent = function (handlerName, methodId, dispId, targetId, handler, callback) {
+                    var messagingArgs = {
+                        eventCallbackFunction: this.eventCallbackFunctionName
+                    };
+                    var hostArgs = {
+                        id: dispId,
+                        targetId: targetId
+                    };
+                    var correlationId = this.postMessage(messagingArgs, handlerName, methodId, hostArgs, callback);
+                    this.eventHandlerList[correlationId] = new EventHandlerCallback(dispId, targetId, handler);
                 };
-                var correlationId = this.postMessage(messagingArgs, handlerName, methodId, hostArgs, callback);
-                this.eventHandlerList[correlationId] = new EventHandlerCallback(dispId, targetId, handler);
-            };
-            WebViewScriptMessaging.prototype.unregisterEvent = function (handlerName, methodId, dispId, targetId, callback) {
-                var hostArgs = {
-                    id: dispId,
-                    targetId: targetId
-                };
-                for (var key in this.eventHandlerList) {
-                    if (this.eventHandlerList.hasOwnProperty(key)) {
-                        var eventCallback = this.eventHandlerList[key];
-                        if (eventCallback.id == dispId && eventCallback.targetId == targetId) {
-                            delete this.eventHandlerList[key];
+                WebViewScriptMessaging.prototype.unregisterEvent = function (handlerName, methodId, dispId, targetId, callback) {
+                    var hostArgs = {
+                        id: dispId,
+                        targetId: targetId
+                    };
+                    for (var key in this.eventHandlerList) {
+                        if (this.eventHandlerList.hasOwnProperty(key)) {
+                            var eventCallback = this.eventHandlerList[key];
+                            if (eventCallback.id == dispId && eventCallback.targetId == targetId) {
+                                delete this.eventHandlerList[key];
+                            }
                         }
                     }
-                }
-                this.invokeMethod(handlerName, methodId, hostArgs, callback);
-            };
-            WebViewScriptMessaging.prototype.agaveHostCallback = function (callbackId, params) {
-                var callbackFunction = this.callbackList[callbackId];
-                if (callbackFunction) {
-                    var callbacksDone = callbackFunction(params);
-                    if (callbacksDone === undefined || callbacksDone === true) {
-                        delete this.callbackList[callbackId];
+                    this.invokeMethod(handlerName, methodId, hostArgs, callback);
+                };
+                WebViewScriptMessaging.prototype.agaveHostCallback = function (callbackId, params) {
+                    var callbackFunction = this.callbackList[callbackId];
+                    if (callbackFunction) {
+                        var callbacksDone = callbackFunction(params);
+                        if (callbacksDone === undefined || callbacksDone === true) {
+                            delete this.callbackList[callbackId];
+                        }
                     }
-                }
-            };
-            WebViewScriptMessaging.prototype.agaveHostEventCallback = function (callbackId, params) {
-                var eventCallback = this.eventHandlerList[callbackId];
-                if (eventCallback) {
-                    eventCallback.handler(params);
-                }
-            };
-            WebViewScriptMessaging.prototype.postMessage = function (messagingArgs, handlerName, methodId, params, callback) {
-                var correlationId = this.generateCorrelationId();
-                this.callbackList[correlationId] = callback;
-                messagingArgs.methodId = methodId;
-                messagingArgs.params = params;
-                messagingArgs.callbackId = correlationId;
-                messagingArgs.callbackFunction = this.asyncMethodCallbackFunctionName;
-                this.poster.postMessage(handlerName, JSON.stringify(messagingArgs));
-                return correlationId;
-            };
-            WebViewScriptMessaging.prototype.generateCorrelationId = function () {
-                ++this.callingIndex;
-                return this.conversationId + this.callingIndex;
-            };
-            WebViewScriptMessaging.getCurrentTimeMS = function () {
-                return (new Date).getTime();
-            };
-            WebViewScriptMessaging.MESSAGE_TIME_DELTA = 10;
-            return WebViewScriptMessaging;
-        }());
-    })(ScriptMessaging = OSFWebView.ScriptMessaging || (OSFWebView.ScriptMessaging = {}));
-})(OSFWebView || (OSFWebView = {}));
+                };
+                WebViewScriptMessaging.prototype.agaveHostEventCallback = function (callbackId, params) {
+                    var eventCallback = this.eventHandlerList[callbackId];
+                    if (eventCallback) {
+                        eventCallback.handler(params);
+                    }
+                };
+                WebViewScriptMessaging.prototype.postMessage = function (messagingArgs, handlerName, methodId, params, callback) {
+                    var correlationId = this.generateCorrelationId();
+                    this.callbackList[correlationId] = callback;
+                    messagingArgs.methodId = methodId;
+                    messagingArgs.params = params;
+                    messagingArgs.callbackId = correlationId;
+                    messagingArgs.callbackFunction = this.asyncMethodCallbackFunctionName;
+                    this.poster.postMessage(handlerName, JSON.stringify(messagingArgs));
+                    return correlationId;
+                };
+                WebViewScriptMessaging.prototype.generateCorrelationId = function () {
+                    ++this.callingIndex;
+                    return this.conversationId + this.callingIndex;
+                };
+                WebViewScriptMessaging.getCurrentTimeMS = function () {
+                    return (new Date).getTime();
+                };
+                WebViewScriptMessaging.MESSAGE_TIME_DELTA = 10;
+                return WebViewScriptMessaging;
+            }());
+        })(ScriptMessaging = WebView.ScriptMessaging || (WebView.ScriptMessaging = {}));
+    })(WebView = OSF.WebView || (OSF.WebView = {}));
+})(OSF || (OSF = {}));
 var OSF;
 (function (OSF) {
     var Win32RichClientHostController = (function (_super) {
@@ -7244,17 +7272,6 @@ var OSF;
             Office.onReadyInternal(function () {
                 OSFPerfUtil.sendPerformanceTelemetry();
             });
-            if (OSF._OfficeAppFactory.getHostInfo().hostLocale) {
-                setTimeout(function () {
-                    OSF.OUtil.ensureOfficeStringsJs().then(function () {
-                        if (OSF._OfficeAppFactory.getHostInfo().hostType === "outlook") {
-                            OSF._OfficeAppFactory.getInitializationHelper().loadAppSpecificScriptAndCreateOM(OSF._OfficeAppFactory.getOfficeAppContext(), function () { console.log("callback called;"); });
-                        }
-                    }).catch(function (ex) {
-                        console.error(ex);
-                    });
-                }, 0);
-            }
         });
     }
 })(OSF || (OSF = {}));
