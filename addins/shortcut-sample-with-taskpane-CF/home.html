@@ -10,13 +10,27 @@
     <script src="shortcuts.js" type="text/javascript"></script>
     <script src="customfunctions.js" type="text/javascript"></script>
     <script type="text/javascript">   
-		// The testing data shared between taskpane and custom function
-		var g_sharedAppData = {};
-		function appCmdUpdateSharedAppData(event) {
-			g_sharedAppData.value = 2019;
-			event.completed();
-		}
-	</script>
+	// The testing data shared between taskpane and custom function
+	var g_sharedAppData = {};
+	function appCmdUpdateSharedAppData(event) {
+		g_sharedAppData.value = 2019;
+		event.completed();
+        }
+
+        window.addEventListener('keydown', logKey);
+        function logKey(e) {
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 0x4B) {
+                var elem = document.createElement("div");
+                elem.style.marginBottom = "6px";
+                elem.innerText = "Ctrl+Shift+K got pressed!";
+                document.getElementById("DivShortcutTestResult").appendChild(elem);
+            }
+        }
+
+        function clearLog() {
+            document.getElementById("DivShortcutTestResult").innerHTML = "";
+        }
+    </script>
 </head>
 <body>
 	<div id="content-main">
@@ -29,6 +43,7 @@
             <li>Set Color: CTRL+SHIFT+O</li>
             <li>Set Underline: CTRL+SHIFT+U</li>
             <li>Set Date Format: CTRL+SHIFT+D</li>
+            <li>Log Shortcut: CTRL+SHIFT+K</li>
         </ul>
         <p>For ja-jp, use the following instead:</p>
         <ul>
@@ -40,6 +55,9 @@
             <li>Show Taskpane: CTRL+SHIFT+LEFT</li>
             <li>Hide Taskpane: CTRL+SHIFT+RIGHT</li>
         </ul>
-	</div>
+        <hr />
+        <button type="button" onclick="clearLog()">Clear</button>
+        <div id="DivShortcutTestResult"></div>
+        </div>
 </body>
 </html>
