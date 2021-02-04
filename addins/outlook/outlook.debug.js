@@ -369,13 +369,18 @@ var OSF;
     var AsyncMethodExecutor = (function () {
         function AsyncMethodExecutor() {
         }
-        AsyncMethodExecutor.prototype.invokeCallback = function (dispId, callback, status, value) {
+        AsyncMethodExecutor.prototype.invokeCallback = function (dispId, callback, status, value, asyncContext) {
             if (status == 0) {
                 var successResult = {
                     status: Office.AsyncResultStatus.succeeded,
                     value: value
                 };
-                callback(successResult);
+                if (typeof asyncContext !== "undefined") {
+                    successResult[OSF.ParameterNames.AsyncContext] = asyncContext;
+                }
+                if (typeof callback !== "undefined") {
+                    callback(successResult);
+                }
             }
             else {
                 var errorResult = {
@@ -384,7 +389,9 @@ var OSF;
                         code: status
                     }
                 };
-                callback(errorResult);
+                if (typeof callback !== "undefined") {
+                    callback(errorResult);
+                }
             }
         };
         return AsyncMethodExecutor;
@@ -515,6 +522,259 @@ var OSF;
         return ErrorCodeManager;
     }());
     OSF.ErrorCodeManager = ErrorCodeManager;
+    var DDA;
+    (function (DDA) {
+        var ErrorCodeManager = (function () {
+            function ErrorCodeManager() {
+            }
+            ErrorCodeManager.getErrorArgs = function (errorCode) {
+                var errorArgs = this.m_errorMappings[errorCode];
+                if (!errorArgs) {
+                    errorArgs = this.m_errorMappings[ErrorCodes.ooeInternalError];
+                }
+                else {
+                    if (!errorArgs.name) {
+                        errorArgs.name = this.m_errorMappings[ErrorCodes.ooeInternalError].name;
+                    }
+                    if (!errorArgs.message) {
+                        errorArgs.message = this.m_errorMappings[ErrorCodes.ooeInternalError].message;
+                    }
+                }
+                return errorArgs;
+            };
+            ErrorCodeManager.addErrorMessage = function (errorCode, errorNameMessage) {
+                this.m_errorMappings[errorCode] = errorNameMessage;
+            };
+            ErrorCodeManager.initializeErrorMessages = function (stringNS) {
+                this.m_errorMappings[ErrorCodes.ooeCoercionTypeNotSupported] = { name: stringNS.L_InvalidCoercion, message: stringNS.L_CoercionTypeNotSupported };
+                this.m_errorMappings[ErrorCodes.ooeGetSelectionNotMatchDataType] = { name: stringNS.L_DataReadError, message: stringNS.L_GetSelectionNotSupported };
+                this.m_errorMappings[ErrorCodes.ooeCoercionTypeNotMatchBinding] = { name: stringNS.L_InvalidCoercion, message: stringNS.L_CoercionTypeNotMatchBinding };
+                this.m_errorMappings[ErrorCodes.ooeInvalidGetRowColumnCounts] = { name: stringNS.L_DataReadError, message: stringNS.L_InvalidGetRowColumnCounts };
+                this.m_errorMappings[ErrorCodes.ooeSelectionNotSupportCoercionType] = { name: stringNS.L_DataReadError, message: stringNS.L_SelectionNotSupportCoercionType };
+                this.m_errorMappings[ErrorCodes.ooeInvalidGetStartRowColumn] = { name: stringNS.L_DataReadError, message: stringNS.L_InvalidGetStartRowColumn };
+                this.m_errorMappings[ErrorCodes.ooeNonUniformPartialGetNotSupported] = { name: stringNS.L_DataReadError, message: stringNS.L_NonUniformPartialGetNotSupported };
+                this.m_errorMappings[ErrorCodes.ooeGetDataIsTooLarge] = { name: stringNS.L_DataReadError, message: stringNS.L_GetDataIsTooLarge };
+                this.m_errorMappings[ErrorCodes.ooeFileTypeNotSupported] = { name: stringNS.L_DataReadError, message: stringNS.L_FileTypeNotSupported };
+                this.m_errorMappings[ErrorCodes.ooeGetDataParametersConflict] = { name: stringNS.L_DataReadError, message: stringNS.L_GetDataParametersConflict };
+                this.m_errorMappings[ErrorCodes.ooeInvalidGetColumns] = { name: stringNS.L_DataReadError, message: stringNS.L_InvalidGetColumns };
+                this.m_errorMappings[ErrorCodes.ooeInvalidGetRows] = { name: stringNS.L_DataReadError, message: stringNS.L_InvalidGetRows };
+                this.m_errorMappings[ErrorCodes.ooeInvalidReadForBlankRow] = { name: stringNS.L_DataReadError, message: stringNS.L_InvalidReadForBlankRow };
+                this.m_errorMappings[ErrorCodes.ooeUnsupportedDataObject] = { name: stringNS.L_DataWriteError, message: stringNS.L_UnsupportedDataObject };
+                this.m_errorMappings[ErrorCodes.ooeCannotWriteToSelection] = { name: stringNS.L_DataWriteError, message: stringNS.L_CannotWriteToSelection };
+                this.m_errorMappings[ErrorCodes.ooeDataNotMatchSelection] = { name: stringNS.L_DataWriteError, message: stringNS.L_DataNotMatchSelection };
+                this.m_errorMappings[ErrorCodes.ooeOverwriteWorksheetData] = { name: stringNS.L_DataWriteError, message: stringNS.L_OverwriteWorksheetData };
+                this.m_errorMappings[ErrorCodes.ooeDataNotMatchBindingSize] = { name: stringNS.L_DataWriteError, message: stringNS.L_DataNotMatchBindingSize };
+                this.m_errorMappings[ErrorCodes.ooeInvalidSetStartRowColumn] = { name: stringNS.L_DataWriteError, message: stringNS.L_InvalidSetStartRowColumn };
+                this.m_errorMappings[ErrorCodes.ooeInvalidDataFormat] = { name: stringNS.L_InvalidFormat, message: stringNS.L_InvalidDataFormat };
+                this.m_errorMappings[ErrorCodes.ooeDataNotMatchCoercionType] = { name: stringNS.L_InvalidDataObject, message: stringNS.L_DataNotMatchCoercionType };
+                this.m_errorMappings[ErrorCodes.ooeDataNotMatchBindingType] = { name: stringNS.L_InvalidDataObject, message: stringNS.L_DataNotMatchBindingType };
+                this.m_errorMappings[ErrorCodes.ooeSetDataIsTooLarge] = { name: stringNS.L_DataWriteError, message: stringNS.L_SetDataIsTooLarge };
+                this.m_errorMappings[ErrorCodes.ooeNonUniformPartialSetNotSupported] = { name: stringNS.L_DataWriteError, message: stringNS.L_NonUniformPartialSetNotSupported };
+                this.m_errorMappings[ErrorCodes.ooeInvalidSetColumns] = { name: stringNS.L_DataWriteError, message: stringNS.L_InvalidSetColumns };
+                this.m_errorMappings[ErrorCodes.ooeInvalidSetRows] = { name: stringNS.L_DataWriteError, message: stringNS.L_InvalidSetRows };
+                this.m_errorMappings[ErrorCodes.ooeSetDataParametersConflict] = { name: stringNS.L_DataWriteError, message: stringNS.L_SetDataParametersConflict };
+                this.m_errorMappings[ErrorCodes.ooeSelectionCannotBound] = { name: stringNS.L_BindingCreationError, message: stringNS.L_SelectionCannotBound };
+                this.m_errorMappings[ErrorCodes.ooeBindingNotExist] = { name: stringNS.L_InvalidBindingError, message: stringNS.L_BindingNotExist };
+                this.m_errorMappings[ErrorCodes.ooeBindingToMultipleSelection] = { name: stringNS.L_BindingCreationError, message: stringNS.L_BindingToMultipleSelection };
+                this.m_errorMappings[ErrorCodes.ooeInvalidSelectionForBindingType] = { name: stringNS.L_BindingCreationError, message: stringNS.L_InvalidSelectionForBindingType };
+                this.m_errorMappings[ErrorCodes.ooeOperationNotSupportedOnThisBindingType] = { name: stringNS.L_InvalidBindingOperation, message: stringNS.L_OperationNotSupportedOnThisBindingType };
+                this.m_errorMappings[ErrorCodes.ooeNamedItemNotFound] = { name: stringNS.L_BindingCreationError, message: stringNS.L_NamedItemNotFound };
+                this.m_errorMappings[ErrorCodes.ooeMultipleNamedItemFound] = { name: stringNS.L_BindingCreationError, message: stringNS.L_MultipleNamedItemFound };
+                this.m_errorMappings[ErrorCodes.ooeInvalidNamedItemForBindingType] = { name: stringNS.L_BindingCreationError, message: stringNS.L_InvalidNamedItemForBindingType };
+                this.m_errorMappings[ErrorCodes.ooeUnknownBindingType] = { name: stringNS.L_InvalidBinding, message: stringNS.L_UnknownBindingType };
+                this.m_errorMappings[ErrorCodes.ooeOperationNotSupportedOnMatrixData] = { name: stringNS.L_InvalidBindingOperation, message: stringNS.L_OperationNotSupportedOnMatrixData };
+                this.m_errorMappings[ErrorCodes.ooeInvalidColumnsForBinding] = { name: stringNS.L_InvalidBinding, message: stringNS.L_InvalidColumnsForBinding };
+                this.m_errorMappings[ErrorCodes.ooeSettingNameNotExist] = { name: stringNS.L_ReadSettingsError, message: stringNS.L_SettingNameNotExist };
+                this.m_errorMappings[ErrorCodes.ooeSettingsCannotSave] = { name: stringNS.L_SaveSettingsError, message: stringNS.L_SettingsCannotSave };
+                this.m_errorMappings[ErrorCodes.ooeSettingsAreStale] = { name: stringNS.L_SettingsStaleError, message: stringNS.L_SettingsAreStale };
+                this.m_errorMappings[ErrorCodes.ooeOperationNotSupported] = { name: stringNS.L_HostError, message: stringNS.L_OperationNotSupported };
+                this.m_errorMappings[ErrorCodes.ooeInternalError] = { name: stringNS.L_InternalError, message: stringNS.L_InternalErrorDescription };
+                this.m_errorMappings[ErrorCodes.ooeDocumentReadOnly] = { name: stringNS.L_PermissionDenied, message: stringNS.L_DocumentReadOnly };
+                this.m_errorMappings[ErrorCodes.ooeEventHandlerNotExist] = { name: stringNS.L_EventRegistrationError, message: stringNS.L_EventHandlerNotExist };
+                this.m_errorMappings[ErrorCodes.ooeInvalidApiCallInContext] = { name: stringNS.L_InvalidAPICall, message: stringNS.L_InvalidApiCallInContext };
+                this.m_errorMappings[ErrorCodes.ooeShuttingDown] = { name: stringNS.L_ShuttingDown, message: stringNS.L_ShuttingDown };
+                this.m_errorMappings[ErrorCodes.ooeUnsupportedEnumeration] = { name: stringNS.L_UnsupportedEnumeration, message: stringNS.L_UnsupportedEnumerationMessage };
+                this.m_errorMappings[ErrorCodes.ooeIndexOutOfRange] = { name: stringNS.L_IndexOutOfRange, message: stringNS.L_IndexOutOfRange };
+                this.m_errorMappings[ErrorCodes.ooeBrowserAPINotSupported] = { name: stringNS.L_APINotSupported, message: stringNS.L_BrowserAPINotSupported };
+                this.m_errorMappings[ErrorCodes.ooeRequestTimeout] = { name: stringNS.L_APICallFailed, message: stringNS.L_RequestTimeout };
+                this.m_errorMappings[ErrorCodes.ooeInvalidOrTimedOutSession] = { name: stringNS.L_InvalidOrTimedOutSession, message: stringNS.L_InvalidOrTimedOutSessionMessage };
+                this.m_errorMappings[ErrorCodes.ooeInvalidApiArguments] = { name: stringNS.L_APICallFailed, message: stringNS.L_InvalidApiArgumentsMessage };
+                this.m_errorMappings[ErrorCodes.ooeWorkbookHidden] = { name: stringNS.L_APICallFailed, message: stringNS.L_WorkbookHiddenMessage };
+                this.m_errorMappings[ErrorCodes.ooeWriteNotSupportedWhenModalDialogOpen] = { name: stringNS.L_APICallFailed, message: stringNS.L_WriteNotSupportedWhenModalDialogOpen };
+                this.m_errorMappings[ErrorCodes.ooeTooManyIncompleteRequests] = { name: stringNS.L_APICallFailed, message: stringNS.L_TooManyIncompleteRequests };
+                this.m_errorMappings[ErrorCodes.ooeRequestTokenUnavailable] = { name: stringNS.L_APICallFailed, message: stringNS.L_RequestTokenUnavailable };
+                this.m_errorMappings[ErrorCodes.ooeActivityLimitReached] = { name: stringNS.L_APICallFailed, message: stringNS.L_ActivityLimitReached };
+                this.m_errorMappings[ErrorCodes.ooeRequestPayloadSizeLimitExceeded] = { name: stringNS.L_APICallFailed, message: stringNS.L_RequestPayloadSizeLimitExceededMessage };
+                this.m_errorMappings[ErrorCodes.ooeResponsePayloadSizeLimitExceeded] = { name: stringNS.L_APICallFailed, message: stringNS.L_ResponsePayloadSizeLimitExceededMessage };
+                this.m_errorMappings[ErrorCodes.ooeCustomXmlNodeNotFound] = { name: stringNS.L_InvalidNode, message: stringNS.L_CustomXmlNodeNotFound };
+                this.m_errorMappings[ErrorCodes.ooeCustomXmlError] = { name: stringNS.L_CustomXmlError, message: stringNS.L_CustomXmlError };
+                this.m_errorMappings[ErrorCodes.ooeCustomXmlExceedQuota] = { name: stringNS.L_CustomXmlExceedQuotaName, message: stringNS.L_CustomXmlExceedQuotaMessage };
+                this.m_errorMappings[ErrorCodes.ooeCustomXmlOutOfDate] = { name: stringNS.L_CustomXmlOutOfDateName, message: stringNS.L_CustomXmlOutOfDateMessage };
+                this.m_errorMappings[ErrorCodes.ooeNoCapability] = { name: stringNS.L_PermissionDenied, message: stringNS.L_NoCapability };
+                this.m_errorMappings[ErrorCodes.ooeCannotNavTo] = { name: stringNS.L_CannotNavigateTo, message: stringNS.L_CannotNavigateTo };
+                this.m_errorMappings[ErrorCodes.ooeSpecifiedIdNotExist] = { name: stringNS.L_SpecifiedIdNotExist, message: stringNS.L_SpecifiedIdNotExist };
+                this.m_errorMappings[ErrorCodes.ooeNavOutOfBound] = { name: stringNS.L_NavOutOfBound, message: stringNS.L_NavOutOfBound };
+                this.m_errorMappings[ErrorCodes.ooeCellDataAmountBeyondLimits] = { name: stringNS.L_DataWriteReminder, message: stringNS.L_CellDataAmountBeyondLimits };
+                this.m_errorMappings[ErrorCodes.ooeElementMissing] = { name: stringNS.L_MissingParameter, message: stringNS.L_ElementMissing };
+                this.m_errorMappings[ErrorCodes.ooeProtectedError] = { name: stringNS.L_PermissionDenied, message: stringNS.L_NoCapability };
+                this.m_errorMappings[ErrorCodes.ooeInvalidCellsValue] = { name: stringNS.L_InvalidValue, message: stringNS.L_InvalidCellsValue };
+                this.m_errorMappings[ErrorCodes.ooeInvalidTableOptionValue] = { name: stringNS.L_InvalidValue, message: stringNS.L_InvalidTableOptionValue };
+                this.m_errorMappings[ErrorCodes.ooeInvalidFormatValue] = { name: stringNS.L_InvalidValue, message: stringNS.L_InvalidFormatValue };
+                this.m_errorMappings[ErrorCodes.ooeRowIndexOutOfRange] = { name: stringNS.L_OutOfRange, message: stringNS.L_RowIndexOutOfRange };
+                this.m_errorMappings[ErrorCodes.ooeColIndexOutOfRange] = { name: stringNS.L_OutOfRange, message: stringNS.L_ColIndexOutOfRange };
+                this.m_errorMappings[ErrorCodes.ooeFormatValueOutOfRange] = { name: stringNS.L_OutOfRange, message: stringNS.L_FormatValueOutOfRange };
+                this.m_errorMappings[ErrorCodes.ooeCellFormatAmountBeyondLimits] = { name: stringNS.L_FormattingReminder, message: stringNS.L_CellFormatAmountBeyondLimits };
+                this.m_errorMappings[ErrorCodes.ooeUserNotSignedIn] = { name: stringNS.L_UserNotSignedIn, message: stringNS.L_UserNotSignedIn };
+                this.m_errorMappings[ErrorCodes.ooeMemoryFileLimit] = { name: stringNS.L_MemoryLimit, message: stringNS.L_CloseFileBeforeRetrieve };
+                this.m_errorMappings[ErrorCodes.ooeNetworkProblemRetrieveFile] = { name: stringNS.L_NetworkProblem, message: stringNS.L_NetworkProblemRetrieveFile };
+                this.m_errorMappings[ErrorCodes.ooeInvalidSliceSize] = { name: stringNS.L_InvalidValue, message: stringNS.L_SliceSizeNotSupported };
+                this.m_errorMappings[ErrorCodes.ooeDialogAlreadyOpened] = { name: stringNS.L_DisplayDialogError, message: stringNS.L_DialogAlreadyOpened };
+                this.m_errorMappings[ErrorCodes.ooeInvalidWidth] = { name: stringNS.L_IndexOutOfRange, message: stringNS.L_IndexOutOfRange };
+                this.m_errorMappings[ErrorCodes.ooeInvalidHeight] = { name: stringNS.L_IndexOutOfRange, message: stringNS.L_IndexOutOfRange };
+                this.m_errorMappings[ErrorCodes.ooeNavigationError] = { name: stringNS.L_DisplayDialogError, message: stringNS.L_NetworkProblem };
+                this.m_errorMappings[ErrorCodes.ooeInvalidScheme] = { name: stringNS.L_DialogNavigateError, message: stringNS.L_DialogInvalidScheme };
+                this.m_errorMappings[ErrorCodes.ooeAppDomains] = { name: stringNS.L_DisplayDialogError, message: stringNS.L_DialogAddressNotTrusted };
+                this.m_errorMappings[ErrorCodes.ooeRequireHTTPS] = { name: stringNS.L_DisplayDialogError, message: stringNS.L_DialogRequireHTTPS };
+                this.m_errorMappings[ErrorCodes.ooeEndUserIgnore] = { name: stringNS.L_DisplayDialogError, message: stringNS.L_UserClickIgnore };
+                this.m_errorMappings[ErrorCodes.ooeCrossZone] = { name: stringNS.L_DisplayDialogError, message: stringNS.L_NewWindowCrossZoneErrorString };
+                this.m_errorMappings[ErrorCodes.ooeNotSSOAgave] = { name: stringNS.L_APINotSupported, message: stringNS.L_InvalidSSOAddinMessage };
+                this.m_errorMappings[ErrorCodes.ooeSSOUserNotSignedIn] = { name: stringNS.L_UserNotSignedIn, message: stringNS.L_UserNotSignedIn };
+                this.m_errorMappings[ErrorCodes.ooeSSOUserAborted] = { name: stringNS.L_UserAborted, message: stringNS.L_UserAbortedMessage };
+                this.m_errorMappings[ErrorCodes.ooeSSOUnsupportedUserIdentity] = { name: stringNS.L_UnsupportedUserIdentity, message: stringNS.L_UnsupportedUserIdentityMessage };
+                this.m_errorMappings[ErrorCodes.ooeSSOInvalidResourceUrl] = { name: stringNS.L_InvalidResourceUrl, message: stringNS.L_InvalidResourceUrlMessage };
+                this.m_errorMappings[ErrorCodes.ooeSSOInvalidGrant] = { name: stringNS.L_InvalidGrant, message: stringNS.L_InvalidGrantMessage };
+                this.m_errorMappings[ErrorCodes.ooeSSOClientError] = { name: stringNS.L_SSOClientError, message: stringNS.L_SSOClientErrorMessage };
+                this.m_errorMappings[ErrorCodes.ooeSSOServerError] = { name: stringNS.L_SSOServerError, message: stringNS.L_SSOServerErrorMessage };
+                this.m_errorMappings[ErrorCodes.ooeAddinIsAlreadyRequestingToken] = { name: stringNS.L_AddinIsAlreadyRequestingToken, message: stringNS.L_AddinIsAlreadyRequestingTokenMessage };
+                this.m_errorMappings[ErrorCodes.ooeSSOUserConsentNotSupportedByCurrentAddinCategory] = { name: stringNS.L_SSOUserConsentNotSupportedByCurrentAddinCategory, message: stringNS.L_SSOUserConsentNotSupportedByCurrentAddinCategoryMessage };
+                this.m_errorMappings[ErrorCodes.ooeSSOConnectionLost] = { name: stringNS.L_SSOConnectionLostError, message: stringNS.L_SSOConnectionLostErrorMessage };
+                this.m_errorMappings[ErrorCodes.ooeSSOUnsupportedPlatform] = { name: stringNS.L_APINotSupported, message: stringNS.L_SSOUnsupportedPlatform };
+                this.m_errorMappings[ErrorCodes.ooeSSOCallThrottled] = { name: stringNS.L_APICallFailed, message: stringNS.L_RequestTokenUnavailable };
+                this.m_errorMappings[ErrorCodes.ooeOperationCancelled] = { name: stringNS.L_OperationCancelledError, message: stringNS.L_OperationCancelledErrorMessage };
+            };
+            ErrorCodeManager.m_errorMappings = {};
+            return ErrorCodeManager;
+        }());
+        DDA.ErrorCodeManager = ErrorCodeManager;
+        var ErrorCodes;
+        (function (ErrorCodes) {
+            ErrorCodes[ErrorCodes["ooeSuccess"] = 0] = "ooeSuccess";
+            ErrorCodes[ErrorCodes["ooeChunkResult"] = 1] = "ooeChunkResult";
+            ErrorCodes[ErrorCodes["ooeCoercionTypeNotSupported"] = 1000] = "ooeCoercionTypeNotSupported";
+            ErrorCodes[ErrorCodes["ooeGetSelectionNotMatchDataType"] = 1001] = "ooeGetSelectionNotMatchDataType";
+            ErrorCodes[ErrorCodes["ooeCoercionTypeNotMatchBinding"] = 1002] = "ooeCoercionTypeNotMatchBinding";
+            ErrorCodes[ErrorCodes["ooeInvalidGetRowColumnCounts"] = 1003] = "ooeInvalidGetRowColumnCounts";
+            ErrorCodes[ErrorCodes["ooeSelectionNotSupportCoercionType"] = 1004] = "ooeSelectionNotSupportCoercionType";
+            ErrorCodes[ErrorCodes["ooeInvalidGetStartRowColumn"] = 1005] = "ooeInvalidGetStartRowColumn";
+            ErrorCodes[ErrorCodes["ooeNonUniformPartialGetNotSupported"] = 1006] = "ooeNonUniformPartialGetNotSupported";
+            ErrorCodes[ErrorCodes["ooeGetDataIsTooLarge"] = 1008] = "ooeGetDataIsTooLarge";
+            ErrorCodes[ErrorCodes["ooeFileTypeNotSupported"] = 1009] = "ooeFileTypeNotSupported";
+            ErrorCodes[ErrorCodes["ooeGetDataParametersConflict"] = 1010] = "ooeGetDataParametersConflict";
+            ErrorCodes[ErrorCodes["ooeInvalidGetColumns"] = 1011] = "ooeInvalidGetColumns";
+            ErrorCodes[ErrorCodes["ooeInvalidGetRows"] = 1012] = "ooeInvalidGetRows";
+            ErrorCodes[ErrorCodes["ooeInvalidReadForBlankRow"] = 1013] = "ooeInvalidReadForBlankRow";
+            ErrorCodes[ErrorCodes["ooeUnsupportedDataObject"] = 2000] = "ooeUnsupportedDataObject";
+            ErrorCodes[ErrorCodes["ooeCannotWriteToSelection"] = 2001] = "ooeCannotWriteToSelection";
+            ErrorCodes[ErrorCodes["ooeDataNotMatchSelection"] = 2002] = "ooeDataNotMatchSelection";
+            ErrorCodes[ErrorCodes["ooeOverwriteWorksheetData"] = 2003] = "ooeOverwriteWorksheetData";
+            ErrorCodes[ErrorCodes["ooeDataNotMatchBindingSize"] = 2004] = "ooeDataNotMatchBindingSize";
+            ErrorCodes[ErrorCodes["ooeInvalidSetStartRowColumn"] = 2005] = "ooeInvalidSetStartRowColumn";
+            ErrorCodes[ErrorCodes["ooeInvalidDataFormat"] = 2006] = "ooeInvalidDataFormat";
+            ErrorCodes[ErrorCodes["ooeDataNotMatchCoercionType"] = 2007] = "ooeDataNotMatchCoercionType";
+            ErrorCodes[ErrorCodes["ooeDataNotMatchBindingType"] = 2008] = "ooeDataNotMatchBindingType";
+            ErrorCodes[ErrorCodes["ooeSetDataIsTooLarge"] = 2009] = "ooeSetDataIsTooLarge";
+            ErrorCodes[ErrorCodes["ooeNonUniformPartialSetNotSupported"] = 2010] = "ooeNonUniformPartialSetNotSupported";
+            ErrorCodes[ErrorCodes["ooeInvalidSetColumns"] = 2011] = "ooeInvalidSetColumns";
+            ErrorCodes[ErrorCodes["ooeInvalidSetRows"] = 2012] = "ooeInvalidSetRows";
+            ErrorCodes[ErrorCodes["ooeSetDataParametersConflict"] = 2013] = "ooeSetDataParametersConflict";
+            ErrorCodes[ErrorCodes["ooeCellDataAmountBeyondLimits"] = 2014] = "ooeCellDataAmountBeyondLimits";
+            ErrorCodes[ErrorCodes["ooeSelectionCannotBound"] = 3000] = "ooeSelectionCannotBound";
+            ErrorCodes[ErrorCodes["ooeBindingNotExist"] = 3002] = "ooeBindingNotExist";
+            ErrorCodes[ErrorCodes["ooeBindingToMultipleSelection"] = 3003] = "ooeBindingToMultipleSelection";
+            ErrorCodes[ErrorCodes["ooeInvalidSelectionForBindingType"] = 3004] = "ooeInvalidSelectionForBindingType";
+            ErrorCodes[ErrorCodes["ooeOperationNotSupportedOnThisBindingType"] = 3005] = "ooeOperationNotSupportedOnThisBindingType";
+            ErrorCodes[ErrorCodes["ooeNamedItemNotFound"] = 3006] = "ooeNamedItemNotFound";
+            ErrorCodes[ErrorCodes["ooeMultipleNamedItemFound"] = 3007] = "ooeMultipleNamedItemFound";
+            ErrorCodes[ErrorCodes["ooeInvalidNamedItemForBindingType"] = 3008] = "ooeInvalidNamedItemForBindingType";
+            ErrorCodes[ErrorCodes["ooeUnknownBindingType"] = 3009] = "ooeUnknownBindingType";
+            ErrorCodes[ErrorCodes["ooeOperationNotSupportedOnMatrixData"] = 3010] = "ooeOperationNotSupportedOnMatrixData";
+            ErrorCodes[ErrorCodes["ooeInvalidColumnsForBinding"] = 3011] = "ooeInvalidColumnsForBinding";
+            ErrorCodes[ErrorCodes["ooeSettingNameNotExist"] = 4000] = "ooeSettingNameNotExist";
+            ErrorCodes[ErrorCodes["ooeSettingsCannotSave"] = 4001] = "ooeSettingsCannotSave";
+            ErrorCodes[ErrorCodes["ooeSettingsAreStale"] = 4002] = "ooeSettingsAreStale";
+            ErrorCodes[ErrorCodes["ooeOperationNotSupported"] = 5000] = "ooeOperationNotSupported";
+            ErrorCodes[ErrorCodes["ooeInternalError"] = 5001] = "ooeInternalError";
+            ErrorCodes[ErrorCodes["ooeDocumentReadOnly"] = 5002] = "ooeDocumentReadOnly";
+            ErrorCodes[ErrorCodes["ooeEventHandlerNotExist"] = 5003] = "ooeEventHandlerNotExist";
+            ErrorCodes[ErrorCodes["ooeInvalidApiCallInContext"] = 5004] = "ooeInvalidApiCallInContext";
+            ErrorCodes[ErrorCodes["ooeShuttingDown"] = 5005] = "ooeShuttingDown";
+            ErrorCodes[ErrorCodes["ooeUnsupportedEnumeration"] = 5007] = "ooeUnsupportedEnumeration";
+            ErrorCodes[ErrorCodes["ooeIndexOutOfRange"] = 5008] = "ooeIndexOutOfRange";
+            ErrorCodes[ErrorCodes["ooeBrowserAPINotSupported"] = 5009] = "ooeBrowserAPINotSupported";
+            ErrorCodes[ErrorCodes["ooeInvalidParam"] = 5010] = "ooeInvalidParam";
+            ErrorCodes[ErrorCodes["ooeRequestTimeout"] = 5011] = "ooeRequestTimeout";
+            ErrorCodes[ErrorCodes["ooeInvalidOrTimedOutSession"] = 5012] = "ooeInvalidOrTimedOutSession";
+            ErrorCodes[ErrorCodes["ooeInvalidApiArguments"] = 5013] = "ooeInvalidApiArguments";
+            ErrorCodes[ErrorCodes["ooeOperationCancelled"] = 5014] = "ooeOperationCancelled";
+            ErrorCodes[ErrorCodes["ooeWorkbookHidden"] = 5015] = "ooeWorkbookHidden";
+            ErrorCodes[ErrorCodes["ooeWriteNotSupportedWhenModalDialogOpen"] = 5016] = "ooeWriteNotSupportedWhenModalDialogOpen";
+            ErrorCodes[ErrorCodes["ooeTooManyIncompleteRequests"] = 5100] = "ooeTooManyIncompleteRequests";
+            ErrorCodes[ErrorCodes["ooeRequestTokenUnavailable"] = 5101] = "ooeRequestTokenUnavailable";
+            ErrorCodes[ErrorCodes["ooeActivityLimitReached"] = 5102] = "ooeActivityLimitReached";
+            ErrorCodes[ErrorCodes["ooeRequestPayloadSizeLimitExceeded"] = 5103] = "ooeRequestPayloadSizeLimitExceeded";
+            ErrorCodes[ErrorCodes["ooeResponsePayloadSizeLimitExceeded"] = 5104] = "ooeResponsePayloadSizeLimitExceeded";
+            ErrorCodes[ErrorCodes["ooeCustomXmlNodeNotFound"] = 6000] = "ooeCustomXmlNodeNotFound";
+            ErrorCodes[ErrorCodes["ooeCustomXmlError"] = 6100] = "ooeCustomXmlError";
+            ErrorCodes[ErrorCodes["ooeCustomXmlExceedQuota"] = 6101] = "ooeCustomXmlExceedQuota";
+            ErrorCodes[ErrorCodes["ooeCustomXmlOutOfDate"] = 6102] = "ooeCustomXmlOutOfDate";
+            ErrorCodes[ErrorCodes["ooeNoCapability"] = 7000] = "ooeNoCapability";
+            ErrorCodes[ErrorCodes["ooeCannotNavTo"] = 7001] = "ooeCannotNavTo";
+            ErrorCodes[ErrorCodes["ooeSpecifiedIdNotExist"] = 7002] = "ooeSpecifiedIdNotExist";
+            ErrorCodes[ErrorCodes["ooeNavOutOfBound"] = 7004] = "ooeNavOutOfBound";
+            ErrorCodes[ErrorCodes["ooeElementMissing"] = 8000] = "ooeElementMissing";
+            ErrorCodes[ErrorCodes["ooeProtectedError"] = 8001] = "ooeProtectedError";
+            ErrorCodes[ErrorCodes["ooeInvalidCellsValue"] = 8010] = "ooeInvalidCellsValue";
+            ErrorCodes[ErrorCodes["ooeInvalidTableOptionValue"] = 8011] = "ooeInvalidTableOptionValue";
+            ErrorCodes[ErrorCodes["ooeInvalidFormatValue"] = 8012] = "ooeInvalidFormatValue";
+            ErrorCodes[ErrorCodes["ooeRowIndexOutOfRange"] = 8020] = "ooeRowIndexOutOfRange";
+            ErrorCodes[ErrorCodes["ooeColIndexOutOfRange"] = 8021] = "ooeColIndexOutOfRange";
+            ErrorCodes[ErrorCodes["ooeFormatValueOutOfRange"] = 8022] = "ooeFormatValueOutOfRange";
+            ErrorCodes[ErrorCodes["ooeCellFormatAmountBeyondLimits"] = 8023] = "ooeCellFormatAmountBeyondLimits";
+            ErrorCodes[ErrorCodes["ooeUserNotSignedIn"] = 10000] = "ooeUserNotSignedIn";
+            ErrorCodes[ErrorCodes["ooeMemoryFileLimit"] = 11000] = "ooeMemoryFileLimit";
+            ErrorCodes[ErrorCodes["ooeNetworkProblemRetrieveFile"] = 11001] = "ooeNetworkProblemRetrieveFile";
+            ErrorCodes[ErrorCodes["ooeInvalidSliceSize"] = 11002] = "ooeInvalidSliceSize";
+            ErrorCodes[ErrorCodes["ooeInvalidCallback"] = 11101] = "ooeInvalidCallback";
+            ErrorCodes[ErrorCodes["ooeInvalidWidth"] = 12000] = "ooeInvalidWidth";
+            ErrorCodes[ErrorCodes["ooeInvalidHeight"] = 12001] = "ooeInvalidHeight";
+            ErrorCodes[ErrorCodes["ooeNavigationError"] = 12002] = "ooeNavigationError";
+            ErrorCodes[ErrorCodes["ooeInvalidScheme"] = 12003] = "ooeInvalidScheme";
+            ErrorCodes[ErrorCodes["ooeAppDomains"] = 12004] = "ooeAppDomains";
+            ErrorCodes[ErrorCodes["ooeRequireHTTPS"] = 12005] = "ooeRequireHTTPS";
+            ErrorCodes[ErrorCodes["ooeWebDialogClosed"] = 12006] = "ooeWebDialogClosed";
+            ErrorCodes[ErrorCodes["ooeDialogAlreadyOpened"] = 12007] = "ooeDialogAlreadyOpened";
+            ErrorCodes[ErrorCodes["ooeEndUserAllow"] = 12008] = "ooeEndUserAllow";
+            ErrorCodes[ErrorCodes["ooeEndUserIgnore"] = 12009] = "ooeEndUserIgnore";
+            ErrorCodes[ErrorCodes["ooeNotUILessDialog"] = 12010] = "ooeNotUILessDialog";
+            ErrorCodes[ErrorCodes["ooeCrossZone"] = 12011] = "ooeCrossZone";
+            ErrorCodes[ErrorCodes["ooeNotSSOAgave"] = 13000] = "ooeNotSSOAgave";
+            ErrorCodes[ErrorCodes["ooeSSOUserNotSignedIn"] = 13001] = "ooeSSOUserNotSignedIn";
+            ErrorCodes[ErrorCodes["ooeSSOUserAborted"] = 13002] = "ooeSSOUserAborted";
+            ErrorCodes[ErrorCodes["ooeSSOUnsupportedUserIdentity"] = 13003] = "ooeSSOUnsupportedUserIdentity";
+            ErrorCodes[ErrorCodes["ooeSSOInvalidResourceUrl"] = 13004] = "ooeSSOInvalidResourceUrl";
+            ErrorCodes[ErrorCodes["ooeSSOInvalidGrant"] = 13005] = "ooeSSOInvalidGrant";
+            ErrorCodes[ErrorCodes["ooeSSOClientError"] = 13006] = "ooeSSOClientError";
+            ErrorCodes[ErrorCodes["ooeSSOServerError"] = 13007] = "ooeSSOServerError";
+            ErrorCodes[ErrorCodes["ooeAddinIsAlreadyRequestingToken"] = 13008] = "ooeAddinIsAlreadyRequestingToken";
+            ErrorCodes[ErrorCodes["ooeSSOUserConsentNotSupportedByCurrentAddinCategory"] = 13009] = "ooeSSOUserConsentNotSupportedByCurrentAddinCategory";
+            ErrorCodes[ErrorCodes["ooeSSOConnectionLost"] = 13010] = "ooeSSOConnectionLost";
+            ErrorCodes[ErrorCodes["ooeResourceNotAllowed"] = 13011] = "ooeResourceNotAllowed";
+            ErrorCodes[ErrorCodes["ooeSSOUnsupportedPlatform"] = 13012] = "ooeSSOUnsupportedPlatform";
+            ErrorCodes[ErrorCodes["ooeSSOCallThrottled"] = 13013] = "ooeSSOCallThrottled";
+            ErrorCodes[ErrorCodes["ooeAccessDenied"] = 13990] = "ooeAccessDenied";
+            ErrorCodes[ErrorCodes["ooeGeneralException"] = 13991] = "ooeGeneralException";
+        })(ErrorCodes = DDA.ErrorCodes || (DDA.ErrorCodes = {}));
+    })(DDA = OSF.DDA || (OSF.DDA = {}));
 })(OSF || (OSF = {}));
 var OSF;
 (function (OSF) {
@@ -940,6 +1200,27 @@ var OSF;
             return _scriptInfo.isDebugJs ? OSF.ConstantNames.OfficeStringDebugJS : OSF.ConstantNames.OfficeStringJS;
         }
         LoadScriptHelper.getOfficeStringJsName = getOfficeStringJsName;
+        function waitForFunction(scriptLoadTest, callback, numberOfTries, delay) {
+            var attemptsRemaining = numberOfTries;
+            var timerId;
+            var validateFunction = function () {
+                attemptsRemaining--;
+                if (scriptLoadTest()) {
+                    callback(true);
+                    return;
+                }
+                else if (attemptsRemaining > 0) {
+                    timerId = window.setTimeout(validateFunction, delay);
+                    attemptsRemaining--;
+                }
+                else {
+                    window.clearTimeout(timerId);
+                    callback(false);
+                }
+            };
+            validateFunction();
+        }
+        LoadScriptHelper.waitForFunction = waitForFunction;
         function ensureScriptInfo() {
             if (_scriptInfo) {
                 return;
@@ -1328,6 +1609,18 @@ var Office;
             }
             return undefined;
         });
+        var _roamingSettings;
+        function get_roamingSettings() {
+            if (OSF._OfficeAppFactory.getHostInfo().hostType == Office.HostType.Outlook.toLowerCase()) {
+                if (!_roamingSettings) {
+                    var settingsFunc = OSF._OfficeAppFactory.getOfficeAppContext().get_settingsFunc();
+                    var serializedSettings = settingsFunc();
+                    _roamingSettings = OSF._OfficeAppFactory.getInitializationHelper().createSettings(serializedSettings);
+                }
+            }
+            return _roamingSettings;
+        }
+        OSF.definePropertyOnNamespace(context, 'roamingSettings', get_roamingSettings);
     })(context = Office.context || (Office.context = {}));
 })(Office || (Office = {}));
 var Office;
@@ -1551,9 +1844,7 @@ var OSF;
                 onSuccess(officeAppContext);
                 OSF.OUtil.ensureOfficeStringsJs().then(function () {
                     if (_OfficeAppFactory.getHostInfo().hostType === "outlook") {
-                        _OfficeAppFactory.getInitializationHelper().loadAppSpecificScriptAndCreateOM(officeAppContext, function () {
-                            console.log("callback called;");
-                        });
+                        _OfficeAppFactory.getInitializationHelper().loadAppSpecificScriptAndCreateOM(officeAppContext, invokeOfficeInitializeCallback);
                     }
                 }).catch(function (ex) {
                     console.error(ex);
@@ -1701,6 +1992,13 @@ var OSF;
                 }
             }
         }
+        function invokeOfficeInitializeCallback() {
+            OSF.LoadScriptHelper.waitForFunction(function () { return (Office.initialize != undefined); }, function (initializedDeclared) {
+                if (initializedDeclared) {
+                    Office.initialize(_officeAppContext.get_reason());
+                }
+            }, 400, 50);
+        }
         function getWindowName() {
             return _windowName;
         }
@@ -1802,6 +2100,102 @@ var Office;
         SelectionMode["Selected"] = "selected";
         SelectionMode["None"] = "none";
     })(SelectionMode = Office.SelectionMode || (Office.SelectionMode = {}));
+    (function (AsyncResultStatus) {
+        AsyncResultStatus["Succeeded"] = "succeeded";
+        AsyncResultStatus["Failed"] = "failed";
+    })(AsyncResultStatus = Office.AsyncResultStatus || (Office.AsyncResultStatus = {}));
+    var CoercionType;
+    (function (CoercionType) {
+        CoercionType["Html"] = "html";
+        CoercionType["Image"] = "image";
+        CoercionType["Matrix"] = "matrix";
+        CoercionType["Ooxml"] = "ooxml";
+        CoercionType["OoxmlPackage"] = "ooxmlPackage";
+        CoercionType["PdfFile"] = "pdfFile";
+        CoercionType["SlideRange"] = "slideRange";
+        CoercionType["Table"] = "table";
+        CoercionType["Text"] = "text";
+        CoercionType["XmlSvg"] = "xmlSvg";
+    })(CoercionType = Office.CoercionType || (Office.CoercionType = {}));
+    var MailboxEnums;
+    (function (MailboxEnums) {
+        var EntityType;
+        (function (EntityType) {
+            EntityType["MeetingSuggestion"] = "meetingSuggestion";
+            EntityType["TaskSuggestion"] = "taskSuggestion";
+            EntityType["Address"] = "address";
+            EntityType["EmailAddress"] = "emailAddress";
+            EntityType["Url"] = "url";
+            EntityType["PhoneNumber"] = "phoneNumber";
+            EntityType["Contact"] = "contact";
+            EntityType["FlightReservations"] = "flightReservations";
+            EntityType["ParcelDeliveries"] = "parcelDeliveries";
+        })(EntityType = MailboxEnums.EntityType || (MailboxEnums.EntityType = {}));
+        var ItemType;
+        (function (ItemType) {
+            ItemType["Message"] = "message";
+            ItemType["Appointment"] = "appointment";
+        })(ItemType = MailboxEnums.ItemType || (MailboxEnums.ItemType = {}));
+        var ResponseType;
+        (function (ResponseType) {
+            ResponseType["None"] = "none";
+            ResponseType["Organizer"] = "organizer";
+            ResponseType["Tentative"] = "tentative";
+            ResponseType["Accepted"] = "accepted";
+            ResponseType["Declined"] = "declined";
+        })(ResponseType = MailboxEnums.ResponseType || (MailboxEnums.ResponseType = {}));
+        var RecipientType;
+        (function (RecipientType) {
+            RecipientType["Other"] = "other";
+            RecipientType["DistributionList"] = "distributionList";
+            RecipientType["User"] = "user";
+            RecipientType["ExternalUser"] = "externalUser";
+        })(RecipientType = MailboxEnums.RecipientType || (MailboxEnums.RecipientType = {}));
+        var AttachmentType;
+        (function (AttachmentType) {
+            AttachmentType["File"] = "file";
+            AttachmentType["Item"] = "item";
+            AttachmentType["Cloud"] = "cloud";
+        })(AttachmentType = MailboxEnums.AttachmentType || (MailboxEnums.AttachmentType = {}));
+        var BodyType;
+        (function (BodyType) {
+            BodyType["Text"] = "text";
+            BodyType["Html"] = "html";
+        })(BodyType = MailboxEnums.BodyType || (MailboxEnums.BodyType = {}));
+        var ItemNotificationMessageType;
+        (function (ItemNotificationMessageType) {
+            ItemNotificationMessageType["ProgressIndicator"] = "progressIndicator";
+            ItemNotificationMessageType["InformationalMessage"] = "informationalMessage";
+            ItemNotificationMessageType["ErrorMessage"] = "errorMessage";
+            ItemNotificationMessageType["InsightMessage"] = "insightMessage";
+        })(ItemNotificationMessageType = MailboxEnums.ItemNotificationMessageType || (MailboxEnums.ItemNotificationMessageType = {}));
+        var Folder;
+        (function (Folder) {
+            Folder["Inbox"] = "inbox";
+            Folder["Junk"] = "junk";
+            Folder["DeletedItems"] = "deletedItems";
+        })(Folder = MailboxEnums.Folder || (MailboxEnums.Folder = {}));
+        var UserProfileType;
+        (function (UserProfileType) {
+            UserProfileType["Office365"] = "office365";
+            UserProfileType["OutlookCom"] = "outlookCom";
+            UserProfileType["Enterprise"] = "enterprise";
+        })(UserProfileType = MailboxEnums.UserProfileType || (MailboxEnums.UserProfileType = {}));
+        var RestVersion;
+        (function (RestVersion) {
+            RestVersion["v1_0"] = "v1.0";
+            RestVersion["v2_0"] = "v2.0";
+            RestVersion["Beta"] = "beta";
+        })(RestVersion = MailboxEnums.RestVersion || (MailboxEnums.RestVersion = {}));
+        var ModuleType;
+        (function (ModuleType) {
+            ModuleType["Addins"] = "addins";
+        })(ModuleType = MailboxEnums.ModuleType || (MailboxEnums.ModuleType = {}));
+        var ActionType;
+        (function (ActionType) {
+            ActionType["ShowTaskPane"] = "showTaskPane";
+        })(ActionType = MailboxEnums.ActionType || (MailboxEnums.ActionType = {}));
+    })(MailboxEnums = Office.MailboxEnums || (Office.MailboxEnums = {}));
 })(Office || (Office = {}));
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -3927,7 +4321,7 @@ var OSF;
             _this._clientHostController = _clientHostController;
             return _this;
         }
-        SafeArrayAsyncMethodExecutor.prototype.executeAsync = function (id, dataTransform, callback) {
+        SafeArrayAsyncMethodExecutor.prototype.executeAsync = function (id, dataTransform, callback, asyncContext) {
             var _this = this;
             try {
                 this._clientHostController.execute(id, dataTransform.toSafeArrayHost(), function (hostResponseArgsNative, resultCode) {
@@ -3938,7 +4332,7 @@ var OSF;
                         }
                     }
                     else {
-                        _this.handleHostResponse(hostResponseArgs, callback, dataTransform, id);
+                        _this.handleHostResponse(hostResponseArgs, callback, dataTransform, id, asyncContext);
                     }
                     return true;
                 });
@@ -3997,7 +4391,7 @@ var OSF;
                 this.onException(ex, id, callback);
             }
         };
-        SafeArrayAsyncMethodExecutor.prototype.handleHostResponse = function (hostResponseArgsNative, callback, dataTransform, id) {
+        SafeArrayAsyncMethodExecutor.prototype.handleHostResponse = function (hostResponseArgsNative, callback, dataTransform, id, asyncContext) {
             var chunkResultData;
             var result;
             var status;
@@ -4050,7 +4444,7 @@ var OSF;
                 if (status == 0) {
                     value = dataTransform.fromSafeArrayHost(payload);
                 }
-                this.invokeCallback(id, callback, status, value);
+                this.invokeCallback(id, callback, status, value, asyncContext);
             }
         };
         SafeArrayAsyncMethodExecutor.prototype.onException = function (ex, dispId, callback) {
@@ -4388,7 +4782,7 @@ var OSF;
             _this._clientHostController = _clientHostController;
             return _this;
         }
-        WebAsyncMethodExecutor.prototype.executeAsync = function (id, dataTransform, callback) {
+        WebAsyncMethodExecutor.prototype.executeAsync = function (id, dataTransform, callback, asyncContext) {
             var _this = this;
             this._clientHostController.execute(id, dataTransform.toWebHost(), function (resultCode, payload) {
                 if (callback) {
@@ -4400,7 +4794,7 @@ var OSF;
                         if (resultCode == 0) {
                             value = dataTransform.fromWebHost(payload);
                         }
-                        _this.invokeCallback(id, callback, resultCode, value);
+                        _this.invokeCallback(id, callback, resultCode, value, asyncContext);
                     }
                 }
                 return true;
@@ -5096,6 +5490,9 @@ var OSF;
                 onError(ex);
             }
         };
+        WebInitializationHelper.prototype.initializeSettings = function () {
+            return this.createSettings(this._serializedSettings);
+        };
         WebInitializationHelper.prototype.createClientHostController = function () {
             if (!this._clientHostController) {
                 if (this._hostInfo.hostType.toLowerCase() === Office.HostType.Outlook.toLowerCase()) {
@@ -5506,6 +5903,9 @@ var OSF;
                 handler = OSF.Webkit.MessageHandlerName;
             }
             OSF.ScriptMessaging.GetScriptMessenger().invokeMethod(handler, OSF.Webkit.MethodId.GetContext, [], getInvocationCallback);
+        };
+        WebkitInitializationHelper.prototype.initializeSettings = function () {
+            return this.createSettings(this._serializedSettings);
         };
         WebkitInitializationHelper.prototype.createClientHostController = function () {
             if (!this._clientHostController) {
@@ -6015,6 +6415,9 @@ var OSF;
                 handler = OSF.WebView.MessageHandlerName;
             }
             OSF.ScriptMessaging.GetScriptMessenger().invokeMethod(handler, OSF.WebView.MethodId.GetContext, [], getInvocationCallback);
+        };
+        WebViewInitializationHelper.prototype.initializeSettings = function () {
+            return this.createSettings(this._serializedSettings);
         };
         WebViewInitializationHelper.prototype.createClientHostController = function () {
             if (!this._clientHostController) {
@@ -7856,55 +8259,55 @@ OSF.InitializationHelper.prototype.prepareApiSurface = function OSF_Initializati
     //     OSF._OfficeAppFactory.setHostFacade(new OSF.DDA.DispIdHost.Facade(OSF.DDA.DispIdHost.getClientDelegateMethods,OSF.DDA.SafeArray.Delegate.ParameterMap));
     // }
 }
-OSF.DDA.SettingsManager = {
-    SerializedSettings: "serializedSettings",
-    DateJSONPrefix: "Date(",
-    DataJSONSuffix: ")",
-    serializeSettings: function OSF_DDA_SettingsManager$serializeSettings(settingsCollection) {
-        var ret = {};
-        for (var key in settingsCollection) {
-            var value = settingsCollection[key];
-            try  {
-                if (JSON) {
-                    value = JSON.stringify(value, function dateReplacer(k, v) {
-                        return OSF.OUtil.isDate(this[k]) ? OSF.DDA.SettingsManager.DateJSONPrefix + this[k].getTime() + OSF.DDA.SettingsManager.DataJSONSuffix : v;
-                    });
-                } else {
-                    value = Sys.Serialization.JavaScriptSerializer.serialize(value);
-                }
-                ret[key] = value;
-            } catch (ex) {
-            }
-        }
-        return ret;
-    },
-    deserializeSettings: function OSF_DDA_SettingsManager$deserializeSettings(serializedSettings) {
-        var ret = {};
-        serializedSettings = serializedSettings || {};
-        for (var key in serializedSettings) {
-            var value = serializedSettings[key];
-            try  {
-                if (JSON) {
-                    value = JSON.parse(value, function dateReviver(k, v) {
-                        var d;
-                        if (typeof v === 'string' && v && v.length > 6 && v.slice(0, 5) === OSF.DDA.SettingsManager.DateJSONPrefix && v.slice(-1) === OSF.DDA.SettingsManager.DataJSONSuffix) {
-                            d = new Date(parseInt(v.slice(5, -1)));
-                            if (d) {
-                                return d;
-                            }
-                        }
-                        return v;
-                    });
-                } else {
-                    value = Sys.Serialization.JavaScriptSerializer.deserialize(value, true);
-                }
-                ret[key] = value;
-            } catch (ex) {
-            }
-        }
-        return ret;
-    }
-};
+// OSF.DDA.SettingsManager = {
+//     SerializedSettings: "serializedSettings",
+//     DateJSONPrefix: "Date(",
+//     DataJSONSuffix: ")",
+//     serializeSettings: function OSF_DDA_SettingsManager$serializeSettings(settingsCollection) {
+//         var ret = {};
+//         for (var key in settingsCollection) {
+//             var value = settingsCollection[key];
+//             try  {
+//                 if (JSON) {
+//                     value = JSON.stringify(value, function dateReplacer(k, v) {
+//                         return OSF.OUtil.isDate(this[k]) ? OSF.DDA.SettingsManager.DateJSONPrefix + this[k].getTime() + OSF.DDA.SettingsManager.DataJSONSuffix : v;
+//                     });
+//                 } else {
+//                     value = Sys.Serialization.JavaScriptSerializer.serialize(value);
+//                 }
+//                 ret[key] = value;
+//             } catch (ex) {
+//             }
+//         }
+//         return ret;
+//     },
+//     deserializeSettings: function OSF_DDA_SettingsManager$deserializeSettings(serializedSettings) {
+//         var ret = {};
+//         serializedSettings = serializedSettings || {};
+//         for (var key in serializedSettings) {
+//             var value = serializedSettings[key];
+//             try  {
+//                 if (JSON) {
+//                     value = JSON.parse(value, function dateReviver(k, v) {
+//                         var d;
+//                         if (typeof v === 'string' && v && v.length > 6 && v.slice(0, 5) === OSF.DDA.SettingsManager.DateJSONPrefix && v.slice(-1) === OSF.DDA.SettingsManager.DataJSONSuffix) {
+//                             d = new Date(parseInt(v.slice(5, -1)));
+//                             if (d) {
+//                                 return d;
+//                             }
+//                         }
+//                         return v;
+//                     });
+//                 } else {
+//                     value = Sys.Serialization.JavaScriptSerializer.deserialize(value, true);
+//                 }
+//                 ret[key] = value;
+//             } catch (ex) {
+//             }
+//         }
+//         return ret;
+//     }
+// };
 OSF.InitializationHelper.prototype.loadAppSpecificScriptAndCreateOM = function OSF_InitializationHelper$loadAppSpecificScriptAndCreateOM(appContext, appReady) {
 
 var Outlook = typeof Outlook === "object" ? Outlook : {}; Outlook["OutlookAppOm"] =
@@ -15021,12 +15424,14 @@ hWindow.$h.Appointment.isInstanceOfType = function (item) {
 /***/ })
 /******/ ])["default"];
 //# sourceMappingURL=outlook.web.js.map    
-    //OSF.DDA.ErrorCodeManager.initializeErrorMessages(Strings.OfficeOM);
+    OSF.DDA.ErrorCodeManager.initializeErrorMessages(Strings.OfficeOM);
     // if (appContext.get_appName() == OSF.AppName.Outlook && OSF.DDA.RichApi && OSF.DDA.AsyncMethodNames.ExecuteRichApiRequestAsync)
     // {
     //     OSF.DDA.DispIdHost.addAsyncMethods(OSF.DDA.RichApi, [OSF.DDA.AsyncMethodNames.ExecuteRichApiRequestAsync]);
     //     OSF.DDA.RichApi.richApiMessageManager = new OfficeExt.RichApiMessageManager();
     // }
+
+
     // if (appContext.get_appName() == OSF.AppName.OutlookWebApp || appContext.get_appName() == OSF.AppName.OutlookIOS || appContext.get_appName() == OSF.AppName.OutlookAndroid)
     // {
     //     this._settings = this._initializeSettings(appContext, false);
@@ -15039,6 +15444,7 @@ hWindow.$h.Appointment.isInstanceOfType = function (item) {
     // {
     //     this._settings = this._initializeSettings(false);
     // }
+    this.initializeSettings();
 
     
     Office.context.mailbox = new OSF.DDA.OutlookAppOm(appContext, this._webAppState.wnd, appReady);
