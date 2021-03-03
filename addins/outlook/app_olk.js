@@ -46,7 +46,7 @@ function writeResult(result) {
 }
 
 function showDialog() {
-	Office.context.ui.displayDialogAsync('Dialog_olk.html', {height: 30, width: 20},
+	Office.context.ui.displayDialogAsync('https://officedev.github.io/testing-assets/addins/outlook/Dialog_olk.html', {height: 30, width: 20},
 		function (asyncResult) {
 			dialog = asyncResult.value;
 			dialog.addEventHandler(Office.EventType.DialogMessageReceived, processMessage);
