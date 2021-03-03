@@ -1298,7 +1298,7 @@ var OSF;
                 }
                 this.getInstance().addMapping(definition.type, args);
                 if (definition.isComplexType)
-                    this.getInstance().addComplexType(definition.type);
+                    HostParameterMap.addComplexType(definition.type);
             };
             ;
             HostParameterMap.fromHostMap = "fromHost";
