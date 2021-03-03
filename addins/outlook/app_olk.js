@@ -45,5 +45,14 @@ function writeResult(result) {
     document.getElementById("result").value += ("\n" +result);
 }
 
+function showDialog() {
+	Office.context.ui.displayDialogAsync('Dialog_olk.html', {height: 30, width: 20},
+		function (asyncResult) {
+			dialog = asyncResult.value;
+			dialog.addEventHandler(Office.EventType.DialogMessageReceived, processMessage);
+		}
+	);
+}
+
 Office.initialize = function (reason) {};
 Office.onReady(function(info) {});
