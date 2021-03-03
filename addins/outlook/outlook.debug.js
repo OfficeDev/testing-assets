@@ -9334,6 +9334,7 @@ var OSF;
             window.external.MessageParent(message);
         };
         Win32RichClientHostController.prototype.openDialog = function (id, targetId, handler, callback) {
+            this.registerEvent(id, undefined, targetId, handler, callback);
         };
         Win32RichClientHostController.prototype.closeDialog = function (id, eventType, targetId, callback) {
             this.unregisterEvent(id, eventType, targetId, callback);
