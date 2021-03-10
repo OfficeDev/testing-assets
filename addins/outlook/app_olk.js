@@ -50,6 +50,10 @@ function showDialog() {
 		function (asyncResult) {
 			dialog = asyncResult.value;
 			dialog.addEventHandler(Office.EventType.DialogMessageReceived, processMessage);
+			
+			function processMessage(arg) {
+				var messageFromDialog = JSON.parse(arg.message);
+			}
 		}
 	);
 }
