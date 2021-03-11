@@ -673,7 +673,7 @@ var OSF;
                     args.onCalling();
                 }
                 var callback = OSF.SafeArray.getOnAfterRegisterEvent(true, args);
-                OSF._OfficeAppFactory.getClientHostController().openDialog(args.dispId, args.targetId, function OSF_DDA_SafeArrayDelegate$RegisterEventAsync_OnEvent(eventDispId, payload) {
+                OSF._OfficeAppFactory.getClientHostController().openDialog(args.dispId, undefined, args.targetId, function OSF_DDA_SafeArrayDelegate$RegisterEventAsync_OnEvent(eventDispId, payload) {
                     if (args.onEvent) {
                         args.onEvent(payload);
                     }
@@ -693,7 +693,7 @@ var OSF;
             }
             var callback = OSF.SafeArray.getOnAfterRegisterEvent(false, args);
             try {
-                OSF._OfficeAppFactory.getClientHostController().closeDialog(args.dispId, args.targetId, callback);
+                OSF._OfficeAppFactory.getClientHostController().closeDialog(args.dispId, undefined, args.targetId, callback);
             }
             catch (ex) {
                 OSF.SafeArray.onException(ex, args);
