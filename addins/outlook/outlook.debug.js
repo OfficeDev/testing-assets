@@ -1148,6 +1148,7 @@ var OSF;
         };
         ApiMethodCall.prototype.extractRequiredArguments = function (userArgs, caller, stateInfo) {
             if (userArgs.length < this._requiredCount) {
+                throw OSF.Utility.createParameterException(Strings.OfficeOM.L_MissingRequiredArguments);
             }
             var requiredArgs = [];
             var index;
@@ -1270,6 +1271,7 @@ var OSF;
         };
         AsyncMethodCall.prototype.extractOptions = function (userArgs, requiredArgs, caller, stateInfo) {
             if (userArgs.length > this._requiredCount + 2) {
+                throw OSF.Utility.createParameterException(Strings.OfficeOM.L_TooManyArguments);
             }
             var options, parameterCallback;
             for (var i = userArgs.length - 1; i >= this._requiredCount; i--) {
@@ -1277,6 +1279,7 @@ var OSF;
                 switch (typeof argument) {
                     case "object":
                         if (options) {
+                            throw OSF.Utility.createParameterException(Strings.OfficeOM.L_TooManyOptionalObjects);
                         }
                         else {
                             options = argument;
@@ -1284,12 +1287,14 @@ var OSF;
                         break;
                     case "function":
                         if (parameterCallback) {
+                            throw OSF.Utility.createParameterException(Strings.OfficeOM.L_TooManyOptionalFunction);
                         }
                         else {
                             parameterCallback = argument;
                         }
                         break;
                     default:
+                        throw OSF.Utility.createArgumentException(Strings.OfficeOM.L_InValidOptionalArgument);
                         break;
                 }
             }
@@ -7098,6 +7103,7 @@ var OSF;
         }
         OUtil.isInternetExplorer = isInternetExplorer;
         function logExceptionToBrowserConsole(message, exception) {
+            OSF.Utility.trace(message + " Exception details: " + serializeObjectToString(exception));
         }
         function serializeObjectToString(obj) {
             if (typeof (JSON) !== "undefined") {
@@ -7890,6 +7896,108 @@ var OSF;
 })(OSF || (OSF = {}));
 var OSF;
 (function (OSF) {
+    var MacRichClientHostController = (function (_super) {
+        __extends(MacRichClientHostController, _super);
+        function MacRichClientHostController() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        MacRichClientHostController.prototype.openDialog = function (id, eventType, targetId, handler, callback) {
+            if (MacRichClientHostController.popup && !MacRichClientHostController.popup.closed) {
+                callback(12007);
+                return;
+            }
+            var magicWord = "action=displayDialog";
+            window.dialogAPIErrorCode = undefined;
+            var fragmentSeparator = '#';
+            var callArgs = JSON.parse(targetId);
+            var callUrl = callArgs.url;
+            if (!callUrl) {
+                callback(12003);
+                return;
+            }
+            var urlParts = callUrl.split(fragmentSeparator);
+            var seperator = "?";
+            if (urlParts[0].indexOf("?") > -1) {
+                seperator = "&";
+            }
+            var width = screen.width * callArgs.width / 100;
+            var height = screen.height * callArgs.height / 100;
+            var params = "width=" + width + ", height=" + height;
+            urlParts[0] = urlParts[0].concat(seperator).concat(magicWord);
+            var openUrl = urlParts.join(fragmentSeparator);
+            MacRichClientHostController.popup = window.open(openUrl, "", params);
+            function receiveMessage(event) {
+                if (event.source == MacRichClientHostController.popup) {
+                    try {
+                        var messageObj = JSON.parse(event.data);
+                        if (messageObj.dialogMessage) {
+                            handler(id, [0, messageObj.dialogMessage.messageContent]);
+                        }
+                    }
+                    catch (e) {
+                        OSF.Utility.trace("messages received cannot be handlered. Message:" + event.data);
+                    }
+                }
+            }
+            MacRichClientHostController.DialogEventListener = receiveMessage;
+            function checkWindowCloseNotifyError(errorCode) {
+                handler(id, [errorCode]);
+            }
+            function checkWindowClose() {
+                try {
+                    if (MacRichClientHostController.popup == null || MacRichClientHostController.popup.closed) {
+                        window.clearInterval(MacRichClientHostController.interval);
+                        window.removeEventListener("message", MacRichClientHostController.DialogEventListener);
+                        MacRichClientHostController.NotifyError = null;
+                        handler(id, [12006]);
+                    }
+                }
+                catch (e) {
+                    OSF.Utility.trace("Error happened when popup window closed.");
+                }
+            }
+            if (MacRichClientHostController.popup != undefined && window.dialogAPIErrorCode == undefined) {
+                window.addEventListener("message", MacRichClientHostController.DialogEventListener);
+                MacRichClientHostController.interval = window.setInterval(checkWindowClose, 500);
+                MacRichClientHostController.NotifyError = checkWindowCloseNotifyError;
+                callback(0);
+            }
+            else {
+                var error = 5001;
+                if (window.dialogAPIErrorCode) {
+                    error = window.dialogAPIErrorCode;
+                }
+                callback(error);
+            }
+        };
+        MacRichClientHostController.prototype.messageParent = function (params) {
+            var message = params[Microsoft.Office.WebExtension.Parameters.MessageToParent];
+            var messageObj = { dialogMessage: { messageType: 0, messageContent: message } };
+            window.opener.postMessage(JSON.stringify(messageObj), window.location.origin);
+        };
+        MacRichClientHostController.prototype.closeDialog = function (id, eventType, targetId, callback) {
+            if (MacRichClientHostController.popup) {
+                if (MacRichClientHostController.interval) {
+                    window.clearInterval(MacRichClientHostController.interval);
+                }
+                MacRichClientHostController.popup.close();
+                MacRichClientHostController.popup = null;
+                window.removeEventListener("message", MacRichClientHostController.DialogEventListener);
+                MacRichClientHostController.NotifyError = null;
+                callback(0);
+            }
+            else {
+                callback(5001);
+            }
+        };
+        MacRichClientHostController.prototype.sendMessage = function (params) {
+        };
+        return MacRichClientHostController;
+    }(OSF.RichClientHostController));
+    OSF.MacRichClientHostController = MacRichClientHostController;
+})(OSF || (OSF = {}));
+var OSF;
+(function (OSF) {
     var RichClientInitializationHelper = (function (_super) {
         __extends(RichClientInitializationHelper, _super);
         function RichClientInitializationHelper() {
@@ -8081,6 +8189,9 @@ var OSF;
             if (!this._clientHostController) {
                 if (this._hostInfo.hostPlatform === OSF.HostInfoPlatform.win32) {
                     this._clientHostController = new OSF.Win32RichClientHostController();
+                }
+                else if (this._hostInfo.hostPlatform === OSF.HostInfoPlatform.mac) {
+                    this._clientHostController = new OSF.MacRichClientHostController();
                 }
                 else {
                     throw OSF.Utility.createNotImplementedException();
@@ -8514,6 +8625,10 @@ var OSF;
 (function (OSF) {
     var Utility;
     (function (Utility) {
+        function createParameterException(message) {
+            return new Error("Parameter count mismatch: " + message);
+        }
+        Utility.createParameterException = createParameterException;
         function createArgumentException(name) {
             return new Error("Invalid argument " + name);
         }
