@@ -9800,8 +9800,6 @@ var OSF;
                 callback(5001);
             }
         };
-        MacRichClientHostController.prototype.sendMessage = function (params) {
-        };
         return MacRichClientHostController;
     }(OSF.Webkit.WebkitHostController));
     OSF.MacRichClientHostController = MacRichClientHostController;
