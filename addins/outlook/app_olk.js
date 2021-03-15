@@ -57,7 +57,7 @@ function showDialog() {
 
     function onMessageFromDialog(arg) {
         var messageFromDialog = arg.message;
-        document.getElementById("result").value = messageFromDialog;
+        document.getElementById("message").value = messageFromDialog;
     }
 }
 
