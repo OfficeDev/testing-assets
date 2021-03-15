@@ -40,6 +40,7 @@ function closeContainer() {
 
 function clearResult() {
     document.getElementById("result").value = "";
+	document.getElementById("message").value = "";
 }
 
 function writeResult(result) {
