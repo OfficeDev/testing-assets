@@ -10850,7 +10850,7 @@ var OSF;
             }
             var callback = getOnAfterRegisterEvent(true, args);
             try {
-                OSF._OfficeAppFactory.getClientHostController().registerEvent(args.dispId, args.targetId, function OSF_DDA_SafeArrayDelegate$RegisterEventAsync_OnEvent(eventDispId, payload) {
+                OSF._OfficeAppFactory.getClientHostController().registerEvent(args.dispId, undefined, args.targetId, function OSF_DDA_SafeArrayDelegate$RegisterEventAsync_OnEvent(eventDispId, payload) {
                     if (args.onEvent) {
                         args.onEvent(payload);
                     }
@@ -10870,7 +10870,7 @@ var OSF;
             }
             var callback = getOnAfterRegisterEvent(false, args);
             try {
-                OSF._OfficeAppFactory.getClientHostController().unregisterEvent(args.dispId, args.targetId, callback);
+                OSF._OfficeAppFactory.getClientHostController().unregisterEvent(args.dispId, undefined, args.targetId, callback);
             }
             catch (ex) {
                 OSF.SafeArray.onException(ex, args);
