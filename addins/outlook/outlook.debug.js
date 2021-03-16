@@ -8431,13 +8431,15 @@ var OSF;
         function initialize() {
             defineMethods();
             var hostInfo = OSF._OfficeAppFactory.getHostInfo();
+            var isPopupWindow = false;
             if (hostInfo.hostPlatform == OSF.HostInfoPlatform.web) {
+                isPopupWindow = OSF.OUtil.isPopupWindow();
                 defineWebHostParameterMap();
             }
             else {
                 defineSafeArrayParameterMap();
             }
-            OSF.initializeDialogApi();
+            OSF.initializeDialogApi(isPopupWindow);
         }
         CommonApiInitializationHelper.initialize = initialize;
         function defineMethods() {
@@ -8767,7 +8769,7 @@ var OSF;
         });
     }
     OSF.defineDialogWebParameterMap = defineDialogWebParameterMap;
-    function initializeDialogApi() {
+    function initializeDialogApi(isPopupWindow) {
         OSF.EnableMessageChildDialogAPI = true;
         var hostInfo = OSF._OfficeAppFactory.getHostInfo();
         if (hostInfo.hostType == "onenote") {
@@ -8789,9 +8791,9 @@ var OSF;
             }
             var addEventHandler = OSF.SyncMethods.AddMessageHandler;
             if (!target[addEventHandler] && typeof OSF.DialogParentMessageEventDispatch != "undefined") {
-                OSF.DispIdHost.addEventSupport(target, OSF.DialogParentMessageEventDispatch, OSF.OUtil.isPopupWindow());
+                OSF.DispIdHost.addEventSupport(target, OSF.DialogParentMessageEventDispatch, isPopupWindow);
             }
-            if (OSF.OUtil.isPopupWindow()) {
+            if (isPopupWindow) {
                 OSF.AddinNativeAction.Dialog.registerMessageReceivedEvent();
             }
         }
