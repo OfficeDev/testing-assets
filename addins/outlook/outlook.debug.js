@@ -8432,10 +8432,10 @@ var OSF;
             defineMethods();
             var hostInfo = OSF._OfficeAppFactory.getHostInfo();
             if (hostInfo.hostPlatform == OSF.HostInfoPlatform.web) {
-                OSF.defineWebHostParameterMap();
+                defineWebHostParameterMap();
             }
             else {
-                OSF.defineClientHostParameterMap();
+                defineSafeArrayParameterMap();
             }
             OSF.initializeDialogApi();
         }
@@ -8443,6 +8443,12 @@ var OSF;
         function defineMethods() {
             OSF.defineDialogMethods();
             OSF.defineEventMethods();
+        }
+        function defineSafeArrayParameterMap() {
+            OSF.defineDialogSafeArrayParameterMap();
+        }
+        function defineWebHostParameterMap() {
+            OSF.defineDialogWebParameterMap();
         }
     })(CommonApiInitializationHelper = OSF.CommonApiInitializationHelper || (OSF.CommonApiInitializationHelper = {}));
 })(OSF || (OSF = {}));
@@ -8462,6 +8468,10 @@ var OSF;
         hasDialogShown: false,
         isWindowDialog: false
     };
+    OSF.DialogParentMessageEventDispatch = new OSF.EventDispatch([
+        OSF.EventType.DialogParentMessageReceived,
+        OSF.EventType.DialogParentEventReceived
+    ]);
     var DialogEventArgs = (function () {
         function DialogEventArgs(message) {
             if (message[OSF.PropertyDescriptors.MessageType] == 0) {
@@ -8681,6 +8691,82 @@ var OSF;
         });
     }
     OSF.defineDialogMethods = defineDialogMethods;
+    function defineDialogSafeArrayParameterMap() {
+        OSF.HostParameterMap.define({
+            type: OSF.EventDispId.dispidDialogMessageReceivedEvent,
+            fromHost: [
+                { name: OSF.EventDescriptors.DialogMessageReceivedEvent, value: OSF.HostParameterMap.self }
+            ],
+            isComplexType: true
+        });
+        OSF.HostParameterMap.define({
+            type: OSF.EventDescriptors.DialogMessageReceivedEvent,
+            fromHost: [
+                { name: OSF.PropertyDescriptors.MessageType, value: 0 },
+                { name: OSF.PropertyDescriptors.MessageContent, value: 1 }
+            ],
+            isComplexType: true
+        });
+        OSF.HostParameterMap.define({
+            type: OSF.EventDispId.dispidDialogParentMessageReceivedEvent,
+            fromHost: [
+                { name: OSF.EventDescriptors.DialogParentMessageReceivedEvent, value: OSF.HostParameterMap.self }
+            ],
+            isComplexType: true
+        });
+        OSF.HostParameterMap.define({
+            type: OSF.EventDescriptors.DialogParentMessageReceivedEvent,
+            fromHost: [
+                { name: OSF.PropertyDescriptors.MessageType, value: 0 },
+                { name: OSF.PropertyDescriptors.MessageContent, value: 1 }
+            ],
+            isComplexType: true
+        });
+    }
+    OSF.defineDialogSafeArrayParameterMap = defineDialogSafeArrayParameterMap;
+    function defineDialogWebParameterMap() {
+        OSF.HostParameterMap.define({
+            type: OSF.EventDispId.dispidDialogMessageReceivedEvent,
+            fromHost: [
+                { name: OSF.EventDescriptors.DialogMessageReceivedEvent, value: OSF.HostParameterMap.self }
+            ]
+        });
+        OSF.HostParameterMap.addComplexType(OSF.EventDescriptors.DialogMessageReceivedEvent);
+        OSF.HostParameterMap.define({
+            type: OSF.EventDescriptors.DialogMessageReceivedEvent,
+            fromHost: [
+                { name: OSF.PropertyDescriptors.MessageType, value: OSF.Marshaling.DialogMessageReceivedEventKeys.MessageType },
+                { name: OSF.PropertyDescriptors.MessageContent, value: OSF.Marshaling.DialogMessageReceivedEventKeys.MessageContent }
+            ]
+        });
+        OSF.HostParameterMap.define({
+            type: OSF.EventDispId.dispidDialogParentMessageReceivedEvent,
+            fromHost: [
+                { name: OSF.EventDescriptors.DialogParentMessageReceivedEvent, value: OSF.HostParameterMap.self }
+            ]
+        });
+        OSF.HostParameterMap.addComplexType(OSF.EventDescriptors.DialogParentMessageReceivedEvent);
+        OSF.HostParameterMap.define({
+            type: OSF.EventDescriptors.DialogParentMessageReceivedEvent,
+            fromHost: [
+                { name: OSF.PropertyDescriptors.MessageType, value: OSF.Marshaling.DialogParentMessageReceivedEventKeys.MessageType },
+                { name: OSF.PropertyDescriptors.MessageContent, value: OSF.Marshaling.DialogParentMessageReceivedEventKeys.MessageContent }
+            ]
+        });
+        OSF.HostParameterMap.define({
+            type: 144,
+            toHost: [
+                { name: OSF.ParameterNames.MessageToParent, value: OSF.Marshaling.MessageParentKeys.MessageToParent }
+            ]
+        });
+        OSF.HostParameterMap.define({
+            type: 145,
+            toHost: [
+                { name: OSF.ParameterNames.MessageContent, value: OSF.Marshaling.SendMessageKeys.MessageContent }
+            ]
+        });
+    }
+    OSF.defineDialogWebParameterMap = defineDialogWebParameterMap;
     function initializeDialogApi() {
         OSF.EnableMessageChildDialogAPI = true;
         var hostInfo = OSF._OfficeAppFactory.getHostInfo();
@@ -9524,13 +9610,6 @@ var OSF;
             }
         })(Dialog = AddinNativeAction.Dialog || (AddinNativeAction.Dialog = {}));
     })(AddinNativeAction = OSF.AddinNativeAction || (OSF.AddinNativeAction = {}));
-})(OSF || (OSF = {}));
-var OSF;
-(function (OSF) {
-    OSF.DialogParentMessageEventDispatch = new OSF.EventDispatch([
-        OSF.EventType.DialogParentMessageReceived,
-        OSF.EventType.DialogParentEventReceived
-    ]);
 })(OSF || (OSF = {}));
 var OSF;
 (function (OSF) {
@@ -11052,42 +11131,6 @@ var OSF;
         ;
     })(SafeArray = OSF.SafeArray || (OSF.SafeArray = {}));
 })(OSF || (OSF = {}));
-var OSF;
-(function (OSF) {
-    function defineClientHostParameterMap() {
-        OSF.HostParameterMap.define({
-            type: OSF.EventDispId.dispidDialogMessageReceivedEvent,
-            fromHost: [
-                { name: OSF.EventDescriptors.DialogMessageReceivedEvent, value: OSF.HostParameterMap.self }
-            ],
-            isComplexType: true
-        });
-        OSF.HostParameterMap.define({
-            type: OSF.EventDescriptors.DialogMessageReceivedEvent,
-            fromHost: [
-                { name: OSF.PropertyDescriptors.MessageType, value: 0 },
-                { name: OSF.PropertyDescriptors.MessageContent, value: 1 }
-            ],
-            isComplexType: true
-        });
-        OSF.HostParameterMap.define({
-            type: OSF.EventDispId.dispidDialogParentMessageReceivedEvent,
-            fromHost: [
-                { name: OSF.EventDescriptors.DialogParentMessageReceivedEvent, value: OSF.HostParameterMap.self }
-            ],
-            isComplexType: true
-        });
-        OSF.HostParameterMap.define({
-            type: OSF.EventDescriptors.DialogParentMessageReceivedEvent,
-            fromHost: [
-                { name: OSF.PropertyDescriptors.MessageType, value: 0 },
-                { name: OSF.PropertyDescriptors.MessageContent, value: 1 }
-            ],
-            isComplexType: true
-        });
-    }
-    OSF.defineClientHostParameterMap = defineClientHostParameterMap;
-})(OSF || (OSF = {}));
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -11535,52 +11578,6 @@ var OSF;
             UniqueArguments["ArrayData"] = "ArrayData";
         })(UniqueArguments = WAC.UniqueArguments || (WAC.UniqueArguments = {}));
     })(WAC = OSF.WAC || (OSF.WAC = {}));
-})(OSF || (OSF = {}));
-var OSF;
-(function (OSF) {
-    function defineWebHostParameterMap() {
-        OSF.HostParameterMap.define({
-            type: OSF.EventDispId.dispidDialogMessageReceivedEvent,
-            fromHost: [
-                { name: OSF.EventDescriptors.DialogMessageReceivedEvent, value: OSF.HostParameterMap.self }
-            ]
-        });
-        OSF.HostParameterMap.addComplexType(OSF.EventDescriptors.DialogMessageReceivedEvent);
-        OSF.HostParameterMap.define({
-            type: OSF.EventDescriptors.DialogMessageReceivedEvent,
-            fromHost: [
-                { name: OSF.PropertyDescriptors.MessageType, value: OSF.Marshaling.DialogMessageReceivedEventKeys.MessageType },
-                { name: OSF.PropertyDescriptors.MessageContent, value: OSF.Marshaling.DialogMessageReceivedEventKeys.MessageContent }
-            ]
-        });
-        OSF.HostParameterMap.define({
-            type: OSF.EventDispId.dispidDialogParentMessageReceivedEvent,
-            fromHost: [
-                { name: OSF.EventDescriptors.DialogParentMessageReceivedEvent, value: OSF.HostParameterMap.self }
-            ]
-        });
-        OSF.HostParameterMap.addComplexType(OSF.EventDescriptors.DialogParentMessageReceivedEvent);
-        OSF.HostParameterMap.define({
-            type: OSF.EventDescriptors.DialogParentMessageReceivedEvent,
-            fromHost: [
-                { name: OSF.PropertyDescriptors.MessageType, value: OSF.Marshaling.DialogParentMessageReceivedEventKeys.MessageType },
-                { name: OSF.PropertyDescriptors.MessageContent, value: OSF.Marshaling.DialogParentMessageReceivedEventKeys.MessageContent }
-            ]
-        });
-        OSF.HostParameterMap.define({
-            type: 144,
-            toHost: [
-                { name: OSF.ParameterNames.MessageToParent, value: OSF.Marshaling.MessageParentKeys.MessageToParent }
-            ]
-        });
-        OSF.HostParameterMap.define({
-            type: 145,
-            toHost: [
-                { name: OSF.ParameterNames.MessageContent, value: OSF.Marshaling.SendMessageKeys.MessageContent }
-            ]
-        });
-    }
-    OSF.defineWebHostParameterMap = defineWebHostParameterMap;
 })(OSF || (OSF = {}));
 var OSF;
 (function (OSF) {
