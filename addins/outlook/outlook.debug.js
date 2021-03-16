@@ -11070,6 +11070,20 @@ var OSF;
             ],
             isComplexType: true
         });
+        OSF.HostParameterMap.define({
+            type: OSF.EventDispId.dispidDialogParentMessageReceivedEvent,
+            fromHost: [
+                { name: OSF.EventDescriptors.DialogParentMessageReceivedEvent, value: OSF.HostParameterMap.self }
+            ]
+        });
+        OSF.HostParameterMap.addComplexType(OSF.EventDescriptors.DialogParentMessageReceivedEvent);
+        OSF.HostParameterMap.define({
+            type: OSF.EventDescriptors.DialogParentMessageReceivedEvent,
+            fromHost: [
+                { name: OSF.PropertyDescriptors.MessageType, value: OSF.Marshaling.DialogParentMessageReceivedEventKeys.MessageType },
+                { name: OSF.PropertyDescriptors.MessageContent, value: OSF.Marshaling.DialogParentMessageReceivedEventKeys.MessageContent }
+            ]
+        });
     }
     OSF.defineClientHostParameterMap = defineClientHostParameterMap;
 })(OSF || (OSF = {}));
