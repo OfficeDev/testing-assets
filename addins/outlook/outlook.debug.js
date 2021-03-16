@@ -11074,15 +11074,16 @@ var OSF;
             type: OSF.EventDispId.dispidDialogParentMessageReceivedEvent,
             fromHost: [
                 { name: OSF.EventDescriptors.DialogParentMessageReceivedEvent, value: OSF.HostParameterMap.self }
-            ]
+            ],
+            isComplexType: true
         });
-        OSF.HostParameterMap.addComplexType(OSF.EventDescriptors.DialogParentMessageReceivedEvent);
         OSF.HostParameterMap.define({
             type: OSF.EventDescriptors.DialogParentMessageReceivedEvent,
             fromHost: [
-                { name: OSF.PropertyDescriptors.MessageType, value: OSF.Marshaling.DialogParentMessageReceivedEventKeys.MessageType },
-                { name: OSF.PropertyDescriptors.MessageContent, value: OSF.Marshaling.DialogParentMessageReceivedEventKeys.MessageContent }
-            ]
+                { name: OSF.PropertyDescriptors.MessageType, value: 0 },
+                { name: OSF.PropertyDescriptors.MessageContent, value: 1 }
+            ],
+            isComplexType: true
         });
     }
     OSF.defineClientHostParameterMap = defineClientHostParameterMap;
