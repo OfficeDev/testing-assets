@@ -99,7 +99,7 @@
                 "comment": "Short key for setitalic"
             },
             "setcolor_default_key": {
-                "value": "CTRL+SHIFT+O",
+                "value": "CTRL+SHIFT+L",
                 "comment": "Short key for setcolor"
             },
             "setunderline_default_key": {

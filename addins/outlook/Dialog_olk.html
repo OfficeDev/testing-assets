@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta http-equiv="Expires" content="0" />
+	<title>bundle outlook test</title>
+
+	<script src="outlook.debug.js" type="text/javascript"></script>
+	
+	<script>
+		Office.onReady()
+		.then(function() {
+			Office.context.ui.addHandlerAsync(
+				Office.EventType.DialogParentMessageReceived,
+				onMessageFromParent);
+		});
+
+		function onMessageFromParent(event) {
+			var messageFromParent = event.message;
+			document.getElementById("message").value = messageFromParent;
+		}
+
+		function postMessageToParent() {
+			Office.context.ui.messageParent(true);
+		}
+	</script>
+</head>
+<body>
+	<div id="content-main">
+		<p>Message from parent page:</p>
+		<textarea id="message" style="width: 100%;height: 50px;"></textarea>
+		<button onclick="location.reload()">Reload </button>
+		<br/>
+		<button onclick="postMessageToParent()">Post message to parent</button>
+	</div>
+</body>
+</html>
