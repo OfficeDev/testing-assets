@@ -1107,11 +1107,10 @@ var OSF;
 var OSF;
 (function (OSF) {
     var InitializationHelper = (function () {
-        function InitializationHelper(hostInfo, webAppState, context, roamingSettings, hostFacade) {
+        function InitializationHelper(hostInfo, webAppState, context, hostFacade) {
             this._hostInfo = hostInfo;
             this._webAppState = webAppState;
             this._context = context;
-            this._roamingSettings = roamingSettings;
             this._hostFacade = hostFacade;
         }
         ;
@@ -1738,9 +1737,6 @@ var OSF;
 })(OSF || (OSF = {}));
 var OSF;
 (function (OSF) {
-    var DDA;
-    (function (DDA) {
-    })(DDA = OSF.DDA || (OSF.DDA = {}));
     var _OfficeAppFactory;
     (function (_OfficeAppFactory) {
         var _windowLocationHash;
@@ -1759,7 +1755,6 @@ var OSF;
         var _initializationHelper;
         var _asyncMethodExecutor;
         var _officeAppContext;
-        var _roamingSettings;
         var _initialDisplayModeMappings = {
             0: "Unknown",
             1: "Hidden",
@@ -1934,21 +1929,21 @@ var OSF;
         }
         function createInitializationHelper() {
             if (_hostInfo.hostPlatform === OSF.HostInfoPlatform.web) {
-                _initializationHelper = new OSF.WebInitializationHelper(_hostInfo, _webAppState, null, _roamingSettings, null);
+                _initializationHelper = new OSF.WebInitializationHelper(_hostInfo, _webAppState, null, null);
             }
             else if (_hostInfo.hostPlatform === OSF.HostInfoPlatform.win32) {
-                _initializationHelper = new OSF.RichClientInitializationHelper(_hostInfo, _webAppState, null, _roamingSettings, null);
+                _initializationHelper = new OSF.RichClientInitializationHelper(_hostInfo, _webAppState, null, null);
             }
             else if (_hostInfo.hostPlatform === OSF.HostInfoPlatform.ios || _hostInfo.hostPlatform === OSF.HostInfoPlatform.mac) {
                 if (isWebkit2Sandbox()) {
-                    _initializationHelper = new OSF.WebkitInitializationHelper(_hostInfo, _webAppState, null, _roamingSettings, null);
+                    _initializationHelper = new OSF.WebkitInitializationHelper(_hostInfo, _webAppState, null, null);
                 }
                 else {
                     throw OSF.Utility.createNotImplementedException();
                 }
             }
             else if (_hostInfo.hostPlatform === OSF.HostInfoPlatform.android || _hostInfo.hostPlatform === OSF.HostInfoPlatform.winrt) {
-                _initializationHelper = new OSF.WebViewInitializationHelper(_hostInfo, _webAppState, null, _roamingSettings, null);
+                _initializationHelper = new OSF.WebViewInitializationHelper(_hostInfo, _webAppState, null, null);
             }
             else {
                 console.warn("Office.js is loaded inside in unknown host or platform " + _hostInfo.hostPlatform);
@@ -4098,11 +4093,6 @@ var OSF;
             var manager = new OSF.RichClientSettingsManager(this.getOsfControlContext());
             return manager;
         };
-        RichClientInitializationHelper.prototype.initializeRoamingSettings = function (officeAppContext) {
-            var serializedSettings = officeAppContext.get_settingsFunc()();
-            var deserializedSettings = OSF.OUtil.deserializeSettings(serializedSettings);
-            return new OSF.DDA.Settings(deserializedSettings);
-        };
         RichClientInitializationHelper.prototype.getSerializedSettings = function () {
             var osfControlContext = this.getOsfControlContext();
             var keys = [];
@@ -4958,8 +4948,8 @@ var OSF;
 (function (OSF) {
     var WebInitializationHelper = (function (_super) {
         __extends(WebInitializationHelper, _super);
-        function WebInitializationHelper(hostInfo, webAppState, context, settings, hostFacade) {
-            var _this = _super.call(this, hostInfo, webAppState, context, settings, hostFacade) || this;
+        function WebInitializationHelper(hostInfo, webAppState, context, hostFacade) {
+            var _this = _super.call(this, hostInfo, webAppState, context, hostFacade) || this;
             _this._appContext = {};
             _this._tabbableElements = "a[href]:not([tabindex='-1'])," +
                 "area[href]:not([tabindex='-1'])," +
@@ -5006,11 +4996,6 @@ var OSF;
                 }
                 this._hostInfo.isDialog = osfSessionStorage.getItem(OSF.OUtil.getXdmFieldValue("AppId", false) + "IsDialog") != null ? true : false;
             }
-        };
-        WebInitializationHelper.prototype.initializeRoamingSettings = function (officeAppContext) {
-            var serializedSettings = officeAppContext.get_settingsFunc()();
-            var deserializedSettings = OSF.OUtil.deserializeSettings(serializedSettings);
-            return new OSF.DDA.Settings(deserializedSettings);
         };
         WebInitializationHelper.prototype.checkReceiverOriginAndRun = function (funcToRun) {
             var me = this;
@@ -5635,8 +5620,8 @@ var OSF;
 (function (OSF) {
     var WebkitInitializationHelper = (function (_super) {
         __extends(WebkitInitializationHelper, _super);
-        function WebkitInitializationHelper(hostInfo, webAppState, context, settings, hostFacade) {
-            var _this = _super.call(this, hostInfo, webAppState, context, settings, hostFacade) || this;
+        function WebkitInitializationHelper(hostInfo, webAppState, context, hostFacade) {
+            var _this = _super.call(this, hostInfo, webAppState, context, hostFacade) || this;
             _this.initializeWebkitMessaging();
             return _this;
         }
@@ -5689,11 +5674,6 @@ var OSF;
                 handler = OSF.Webkit.MessageHandlerName;
             }
             OSF.ScriptMessaging.GetScriptMessenger().invokeMethod(handler, OSF.Webkit.MethodId.GetContext, [], getInvocationCallback);
-        };
-        WebkitInitializationHelper.prototype.initializeRoamingSettings = function (officeAppContext) {
-            var serializedSettings = officeAppContext.get_settingsFunc()();
-            var deserializedSettings = OSF.OUtil.deserializeSettings(serializedSettings);
-            return new OSF.DDA.Settings(deserializedSettings);
         };
         WebkitInitializationHelper.prototype.createClientHostController = function () {
             if (!this._clientHostController) {
@@ -6149,8 +6129,8 @@ var OSF;
 (function (OSF) {
     var WebViewInitializationHelper = (function (_super) {
         __extends(WebViewInitializationHelper, _super);
-        function WebViewInitializationHelper(hostInfo, webAppState, context, settings, hostFacade) {
-            var _this = _super.call(this, hostInfo, webAppState, context, settings, hostFacade) || this;
+        function WebViewInitializationHelper(hostInfo, webAppState, context, hostFacade) {
+            var _this = _super.call(this, hostInfo, webAppState, context, hostFacade) || this;
             _this.initializeWebViewMessaging();
             return _this;
         }
@@ -6203,11 +6183,6 @@ var OSF;
                 handler = OSF.WebView.MessageHandlerName;
             }
             OSF.ScriptMessaging.GetScriptMessenger().invokeMethod(handler, OSF.WebView.MethodId.GetContext, [], getInvocationCallback);
-        };
-        WebViewInitializationHelper.prototype.initializeRoamingSettings = function (officeAppContext) {
-            var serializedSettings = officeAppContext.get_settingsFunc()();
-            var deserializedSettings = OSF.OUtil.deserializeSettings(serializedSettings);
-            return new OSF.DDA.Settings(deserializedSettings);
         };
         WebViewInitializationHelper.prototype.createClientHostController = function () {
             if (!this._clientHostController) {
@@ -7560,7 +7535,9 @@ var Office;
         var _roamingSettings;
         function get_roamingSettings() {
             if (!_roamingSettings) {
-                _roamingSettings = OSF._OfficeAppFactory.getInitializationHelper()._roamingSettings;
+                var serializedSettings = OSF._OfficeAppFactory.getOfficeAppContext().get_settingsFunc()();
+                var deserializedSettings = OSF.OUtil.deserializeSettings(serializedSettings);
+                _roamingSettings = new OSF.DDA.Settings(deserializedSettings);
                 OSF.DDA.ClientSettingsManager = OSF._OfficeAppFactory.getInitializationHelper().createClientSettingsManager();
             }
             return _roamingSettings;
@@ -7968,7 +7945,6 @@ var OSF;
         var _mailbox;
         function initializeMailboxObject(officeAppContext, wnd, appReady) {
             if (!_mailbox) {
-                OSF._OfficeAppFactory.getInitializationHelper()._roamingSettings = OSF._OfficeAppFactory.getInitializationHelper().initializeRoamingSettings(officeAppContext);
                 _mailbox = new OSF.DDA.OutlookAppOm(officeAppContext, wnd, appReady);
                 OSF.OutlookInitializationHelper.addEventDispatchToTarget(_mailbox, OSF.OutlookInitializationHelper.getMailboxEventDispatch());
             }
