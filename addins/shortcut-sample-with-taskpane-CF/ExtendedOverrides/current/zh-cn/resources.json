@@ -1,11 +1,11 @@
 {
     "showtaskpane_default_key": {
         "value": "CTRL+SHIFT+HOME",
-        "comment": "Short key for showtaskpane (ja-jp)"
+        "comment": "Short key for showtaskpane (zh-cn)"
     },
     "closetaskpane_default_key": {
         "value": "CTRL+SHIFT+END",
-        "comment": "Short key for hidetaskpane (ja-jp)"
+        "comment": "Short key for hidetaskpane (zh-cn)"
     },
     "setbold_default_key": {
         "value": "CTRL+SHIFT+B",

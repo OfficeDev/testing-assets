@@ -235,6 +235,7 @@
         <Override Locale="es-*" Value="es-es" />
         <Override Locale="fr-*" Value="fr-fr" />
         <Override Locale="ja-jp" Value="ja-jp" />
+        <Override Locale="zh-cn" Value="zh-cn" />
       </Token>
     </Tokens>
 
