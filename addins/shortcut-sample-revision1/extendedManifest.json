@@ -43,6 +43,43 @@
             }
         }
     ],
+    "actions": [
+        {
+            "id": "ShowTaskpane",
+            "type": "ExecuteFunction",
+            "name": "${resource.ShowTaskpaneAction_name}"
+        },
+        {
+            "id": "HideTaskpane",
+            "type": "ExecuteFunction",
+            "name": "${resource.HideTaskpaneAction_name}"
+        },
+        {
+            "id": "SetBold",
+            "type": "ExecuteFunction",
+            "name": "${resource.SetBoldAction_name}"
+        },
+        {
+            "id": "SetItalic",
+            "type": "ExecuteFunction",
+            "name": "${resource.SetItalicAction_name}"
+        },
+        {
+            "id": "SetColor",
+            "type": "ExecuteFunction",
+            "name": "${resource.SetColorAction_name}"
+        },
+        {
+            "id": "SetUnderline",
+            "type": "ExecuteFunction",
+            "name": "${resource.SetUnderlineAction_name}"
+        },
+        {
+            "id": "SetFormat",
+            "type": "ExecuteFunction",
+            "name": "${resource.SetFormatAction_name}"
+        }
+    ],
     "resources": {
         "default": {
             "showtaskpane_default_key": {
