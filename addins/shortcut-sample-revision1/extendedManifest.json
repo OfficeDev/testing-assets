@@ -109,6 +109,34 @@
             "setdateformat_default_key": {
                 "value": "CTRL+SHIFT+D",
                 "comment": "Shortcut key for setdateformat"
+            },
+            "ShowTaskpaneAction_name": {
+                "value": "Show taskpane",
+                "comment": "Display name for action"
+            },
+            "HideTaskpaneAction_name": {
+                "value": "Hide taskpane",
+                "comment": "Display name for action"
+            },
+            "SetBoldAction_name": {
+                "value": "Set bold",
+                "comment": "Display name for action"
+            },
+            "SetItalicAction_name": {
+                "value": "Set italic",
+                "comment": "Display name for action"
+            },
+            "SetColorAction_name": {
+                "value": "Set color",
+                "comment": "Display name for action"
+            },
+            "SetUnderlineAction_name": {
+                "value": "Set underline",
+                "comment": "Display name for action"
+            },
+            "SetFormatAction_name": {
+                "value": "Set format",
+                "comment": "Display name for action"
             }
         }
     }
