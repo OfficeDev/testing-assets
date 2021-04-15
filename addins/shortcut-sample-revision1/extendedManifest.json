@@ -45,37 +45,37 @@
     ],
     "actions": [
         {
-            "id": "ShowTaskpane",
+            "id": "SHOWTASKPANE",
             "type": "ExecuteFunction",
             "name": "${resource.ShowTaskpaneAction_name}"
         },
         {
-            "id": "HideTaskpane",
+            "id": "HIDETASKPANE",
             "type": "ExecuteFunction",
             "name": "${resource.HideTaskpaneAction_name}"
         },
         {
-            "id": "SetBold",
+            "id": "SETBOLD",
             "type": "ExecuteFunction",
             "name": "${resource.SetBoldAction_name}"
         },
         {
-            "id": "SetItalic",
+            "id": "SETITALIC",
             "type": "ExecuteFunction",
             "name": "${resource.SetItalicAction_name}"
         },
         {
-            "id": "SetColor",
+            "id": "SETCOLOR",
             "type": "ExecuteFunction",
             "name": "${resource.SetColorAction_name}"
         },
         {
-            "id": "SetUnderline",
+            "id": "SETUNDERLINE",
             "type": "ExecuteFunction",
             "name": "${resource.SetUnderlineAction_name}"
         },
         {
-            "id": "SetFormat",
+            "id": "SETDATEFORMAT",
             "type": "ExecuteFunction",
             "name": "${resource.SetFormatAction_name}"
         }
