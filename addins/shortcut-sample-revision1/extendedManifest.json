@@ -65,11 +65,6 @@
             "name": "${resource.SetItalicAction_name}"
         },
         {
-            "id": "SETCOLOR",
-            "type": "ExecuteFunction",
-            "name": "${resource.SetColorAction_name}"
-        },
-        {
             "id": "SETUNDERLINE",
             "type": "ExecuteFunction",
             "name": "${resource.SetUnderlineAction_name}"
