@@ -32,9 +32,6 @@
         },
         {
             "action": "SETUNDERLINE",
-            "key": {
-                "default": "${resource.setunderline_default_key}"
-            }
         },
         {
             "action": "SETDATEFORMAT",
