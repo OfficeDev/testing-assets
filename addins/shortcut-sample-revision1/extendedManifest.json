@@ -34,7 +34,7 @@
             "action": "SETUNDERLINE",
             "key": {
                 "default": "${resource.setunderline_default_key}"
-            }
+            } 
         },
         {
             "action": "SETDATEFORMAT",
@@ -63,11 +63,6 @@
             "id": "SETITALIC",
             "type": "ExecuteFunction",
             "name": "${resource.SetItalicAction_name}"
-        },
-        {
-            "id": "SETCOLOR",
-            "type": "ExecuteFunction",
-            "name": "${resource.SetColorAction_name}"
         },
         {
             "id": "SETUNDERLINE",
