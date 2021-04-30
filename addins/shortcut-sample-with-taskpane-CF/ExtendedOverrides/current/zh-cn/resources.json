@@ -28,27 +28,27 @@
         "comment": "Short key for setformat"
     },
     "ShowTaskpaneAction_name": {
-        "value": "Show taskpane",
+        "value": "顯示taskpane",
         "comment": "Display name for action"
     },
     "HideTaskpaneAction_name": {
-        "value": "Hide taskpane",
+        "value": "隱藏taskpane",
         "comment": "Display name for action"
     },
     "SetBoldAction_name": {
-        "value": "Set bold",
+        "value": "加粗",
         "comment": "Display name for action"
     },
     "SetItalicAction_name": {
-        "value": "Set italic",
+        "value": "斜體",
         "comment": "Display name for action"
     },
     "SetColorAction_name": {
-        "value": "Set color",
+        "value": "變色",
         "comment": "Display name for action"
     },
     "SetUnderlineAction_name": {
-        "value": "Set underline",
+        "value": "加下劃綫",
         "comment": "Display name for action"
     },
     "SetFormatAction_name": {
