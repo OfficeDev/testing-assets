@@ -5,11 +5,33 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Expires" content="0" />
     <title>Shortcut Sample</title>
-    <script src="https://unpkg.com/@microsoft/office-js@1.1.44-custom.9/dist/office.js" type="text/javascript"></script>
+    <script src="https://appsforoffice.edog.officeapps.live.com/lib/beta/hosted/office.debug.js" type="text/javascript"></script>
     <script src="shortcuts.js" type="text/javascript"></script>
+    <script>
+        function clearLog() {
+            document.getElementById("DivShortcutTestResult").innerHTML = "";
+        }
+
+        function printMessage(message) {
+            var elem = document.createElement("div");
+            elem.style.marginBottom = "6px";
+            elem.innerText = message;
+            document.getElementById("DivShortcutTestResult").appendChild(elem);
+        }
+
+        function printShortcuts() {
+            (async () => {
+                clearLog();
+                const updatedShortcuts = await Office.actions.getShortcuts();
+                Object.keys(updatedShortcuts).forEach(function (shortcut) {
+                    printMessage(shortcut + ": " + updatedShortcuts[shortcut]);
+                })
+            })();
+        }
+    </script>
 </head>
 <body>
-	<div id="content-main">
+    <div id="content-main">
         <p>Thank you for trying shortcuts for Excel! Try using the shortcuts to execute the following functions!</p>
         <ul>
             <li>Show Taskpane: CTRL+SHIFT+UP</li>
@@ -20,6 +42,9 @@
             <li>Set Underline: CTRL+SHIFT+U</li>
             <li>Set Date Format: CTRL+SHIFT+D</li>
         </ul>
-	</div>
+        <button type="button" onclick="clearLog()">Clear</button>
+        <button type="button" onclick="printShortcuts()">Print Shortcuts</button>
+        <div id="DivShortcutTestResult"></div>
+    </div>
 </body>
 </html>
