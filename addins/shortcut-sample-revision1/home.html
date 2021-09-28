@@ -35,7 +35,7 @@
                 const shortcuts = await Office.actions.getShortcuts();
                 let newShortcuts = {};
                 let i = 1;
-                Object.keys(shortcuts).forEach(function (shortcut) {
+                Object.keys(shortcuts).sort().forEach(function (shortcut) {
                     newShortcuts[shortcut] = "Ctrl+" + i;
                     ++i;
                 })
