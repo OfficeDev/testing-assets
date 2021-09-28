@@ -35,7 +35,7 @@
                 let newShortcuts = {};
                 let i = 1;
                 Object.keys(shortcuts).forEach(function (shortcut) {
-                    newShortcuts[shortcut] = "Ctrl+" + i;
+                    newShortcuts[shortcut] = "Ctrl+Shift+" + i;
                     ++i;
                 })
 
@@ -48,10 +48,8 @@
             (async () => {
                 const shortcuts = await Office.actions.getShortcuts();
                 let newShortcuts = {};
-                let i = 1;
                 Object.keys(shortcuts).forEach(function (shortcut) {
                     newShortcuts[shortcut] = null;
-                    ++i;
                 })
 
                 await Office.actions.replaceShortcuts(newShortcuts);
