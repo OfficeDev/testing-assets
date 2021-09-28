@@ -24,7 +24,7 @@
             (async () => {
                 clearLog();
                 const updatedShortcuts = await Office.actions.getShortcuts();
-                Object.keys(updatedShortcuts).forEach(function (shortcut) {
+                Object.keys(updatedShortcuts).sort().forEach(function (shortcut) {
                     printMessage(shortcut + ": " + updatedShortcuts[shortcut]);
                 })
             })();
