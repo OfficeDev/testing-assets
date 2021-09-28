@@ -61,8 +61,10 @@
             (async () => {
                 const shortcuts = await Office.actions.getShortcuts();
                 let shortcutArray = [];
+                let i = 1;
                 Object.keys(shortcuts).forEach(function (shortcut) {
-                    shortcutArray.push(shortcuts[shortcut]);
+                    shortcutArray.push("Ctrl+"+i);
+                    ++i;
                 })
 
                 clearLog();
