@@ -82,22 +82,24 @@
     <div id="content-main">
         <p>Thank you for trying shortcuts for Excel! Try using the shortcuts to execute the following functions!<p>
         <ul>
-            <li>Show Taskpane: CTRL+SHIFT+UP</li>
-            <li>Hide Taskpane: CTRL+SHIFT+DOWN</li>
-            <li>Set Bold: CTRL+SHIFT+B</li>
-            <li>Set Italic: CTRL+SHIFT+I</li>
-            <li>Set Color: CTRL+SHIFT+O</li>
-            <li>Set Underline: CTRL+SHIFT+U</li>
-            <li>Set Date Format: CTRL+SHIFT+D</li>
+            <li>Hide Taskpane: Ctrl+Shift+Down</li>
+            <li>Set Bold: Ctrl+Shift+B</li>
+            <li>Set Color: Ctrl+Shift+O</li>
+            <li>Set Date Format: Ctrl+Shift+D</li>
+            <li>Set Italic: Ctrl+Shift+I</li>
+            <li>Set Underline: Ctrl+Shift+U</li>
+            <li>Show Taskpane: Ctrl+Shift+Up</li>
         </ul>
         <hr />
-        <label>Customize Keyboard Shortcuts:</label>
+        <label>You can customize the shortcuts using API. Try the following samples.</label>
+        <br>
         <br>
         <button type="button" onclick="printShortcuts()">Get Shortcuts</button>
         <button type="button" onclick="printShortcutsInUse()">Shortcuts In Use</button>
         <button type="button" onclick="replaceShortcuts()">Replace Shortcuts</button>
         <button type="button" onclick="resetShortcuts()">Reset Shortcuts</button>
         <button type="button" onclick="clearLog()">Clear</button>
+        <br>
         <div id="DivShortcutTestResult"></div>
     </div>
 </body>
