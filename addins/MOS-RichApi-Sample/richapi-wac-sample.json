@@ -1,0 +1,1121 @@
+{
+  "titleId": "2418599D-7751-442C-8111-9816B7CB3662",
+  "titleDefinition": {
+    "name": "RichAPI (OPC MOS Test)",
+    "iconSmall": {
+      "uri": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+    },
+    "version": "0.1.0",
+    "ingestionId": "2418599D-7751-442C-8111-9816B7CB3662",
+	 "authorization": {
+        "permissions": {
+            "resourceSpecific": [
+                {
+                    "name": "Mailbox.ReadWrite.User",
+                    "type": "Delegated"
+                },
+                {
+                    "name": "Document.ReadWrite.User",
+                    "type": "Delegated"
+                },
+                {
+                    "name": "Mailbox.SharedFolder",
+                    "type": "Delegated"
+                }
+            ]
+        }
+    },
+    "elementDefinitions": {
+      "extension": [
+        {
+          "requirements": {
+            "scopes": [
+              "mail",
+              "document",
+              "workbook",
+              "presentation"
+            ]
+          },
+          "getStartedMessages": [
+            {
+              "requirements": {
+                "formFactors": [ "desktop" ]
+              },
+              "title": "Get Started",
+              "description": "Your sample add-in loaded succesfully. Click the buttons to get started.",
+              "learnMoreUrl": "https://aka.ms/opc_metaos_examples"
+            }
+          ],
+          "runtimes": [
+            {
+              "id": "taskpane",
+              "type": "general",
+              "code": {
+                "page": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/Home.html",
+                "script": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/Home.js"
+              },
+              "lifetime": "long",
+              "actions": {
+                "items": [
+                  {
+                    "id": "taskpane.showTaskpane",
+                    "type": "contextual-launch",
+                    "view": "home"
+                  },
+                  {
+                    "id": "taskpane.updateSharedValue",
+                    "type": "execution",
+                    "name": "appCmdUpdateSharedAppData"
+                  },
+                  {
+                    "id": "taskpane.addDogfoodSignature",
+                    "type": "execution",
+                    "name": "addDogfoodSignature"
+                  },
+                  {
+                    "id": "taskpane.onMessageCompose",
+                    "type": "execution",
+                    "name": "messageComposeCreated"
+                  },
+                  {
+                    "id": "taskpane.onAppointmentOrganizer",
+                    "type": "execution",
+                    "name": "appointmentOrganizerCreated"
+                  },
+                  {
+                    "id": "taskpane.onMessageAttachmentsChanged",
+                    "type": "execution",
+                    "name": "messageAttachmentsChanged"
+                  },
+                  {
+                    "id": "taskpane.onAppointmentAttachmentsChanged",
+                    "type": "execution",
+                    "name": "appointmentAttachmentsChanged"
+                  },
+                  {
+                    "id": "taskpane.onMessageSend",
+                    "type": "execution",
+                    "name": "onMessageSend"
+                  },
+                  {
+                    "id": "taskpane.onAppointmentSend",
+                    "type": "execution",
+                    "name": "onAppointmentSend"
+                  },
+                  {
+                    "id": "taskpane.onMessageRecipientsChanged",
+                    "type": "execution",
+                    "name": "messageRecipientsChanged"
+                  },
+                  {
+                    "id": "taskpane.onAppointmentAttendeesChanged",
+                    "type": "execution",
+                    "name": "appointmentAttendeesChanged"
+                  },
+                  {
+                    "id": "taskpane.onAppointmentTimeChanged",
+                    "type": "execution",
+                    "name": "appointmentTimeChanged"
+                  },
+                  {
+                    "id": "taskpane.onAppointmentRecurrenceChanged",
+                    "type": "execution",
+                    "name": "appointmentRecurrenceChanged"
+                  },
+                  {
+                    "id": "taskpane.onInfoBarDismissClicked",
+                    "type": "execution",
+                    "name": "infoBarDismissClicked"
+                  }
+                ]
+              },
+              "functions": {
+                "namespace": {
+                  "id": "MICROSOFT.TEST",
+                  "name": "MICROSOFT.TEST"
+                },
+                "items": [
+                  {
+                    "id": "getValue",
+                    "name": "GETSHAREDVALUE",
+                    "description": "Gets the shared value.",
+                    "parameters": [
+                    ],
+                    "result": {
+                      "dimensionality": "scalar"
+                    },
+                    "stream": false,
+                    "volatile": true,
+                    "cancelable": false,
+                    "requiresAddress": false,
+                    "requiresParameterAddress": false
+                  }
+                ],
+                "allowErrorForDataTypeAny": false,
+                "allowRichDataForDataTypeAny": false
+              }
+            },
+            {
+              "id": "webApplicationInfo",
+              "type": "general",
+              "code": {
+                "page": "https://codexeonapps.com/ssoaddin"
+              },
+              "lifetime": "short",
+              "actions": {
+                "items": [
+                  {
+                    "id": "webApplicationInfo.showTaskpane",
+                    "type": "contextual-launch",
+                    "view": "home"
+                  }
+                ]
+              }
+            }
+          ],
+          "ribbons": [
+            {
+              "contexts": [
+                "default"
+              ],
+              "tabs": [
+                {
+                  "nativeId": "TabHome",
+                  "groups": [
+                    {
+                      "id": "richApiGroup",
+                      "label": "RichAPI (OPC MOS Test)",
+                      "icons": [
+                        {
+                          "size": 16,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                        },
+                        {
+                          "size": 32,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                        },
+                        {
+                          "size": 80,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                        }
+                      ],
+                      "controls": [
+                        {
+                          "id": "contextDummy",
+                          "type": "button",
+                          "label": "Default Context",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Default Context",
+                            "description": "Default Context"
+                          },
+                          "actionId": "taskpane.updateSharedValue"
+                        },
+                        {
+                          "id": "showTaskpane",
+                          "type": "button",
+                          "label": "Taskpane",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Show Taskpane",
+                            "description": "Click to show the RichAPI taskpane"
+                          },
+                          "actionId": "taskpane.showTaskpane"
+                        },
+                        {
+                          "id": "updateSharedValue",
+                          "type": "button",
+                          "label": "Update Shared Value",
+                          "enabled": false,
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Update Shared Value",
+                            "description": "Update Shared Value"
+                          },
+                          "actionId": "taskpane.updateSharedValue",
+                          "overriddenByRibbonApi": true
+                        },
+                        {
+                          "id": "menuControl",
+                          "type": "menu",
+                          "label": "Menu Control",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Menu Control",
+                            "description": "Menu Control"
+                          },
+                          "items": [
+                            {
+                              "id": "showTaskpane",
+                              "type": "menuItem",
+                              "label": "Taskpane",
+                              "icons": [
+                                {
+                                  "size": 16,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                                },
+                                {
+                                  "size": 32,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                                },
+                                {
+                                  "size": 80,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                                }
+                              ],
+                              "supertip": {
+                                "title": "Show Taskpane",
+                                "description": "Click to show the RichAPI taskpane"
+                              },
+                              "actionId": "taskpane.showTaskpane"
+                            },
+                            {
+                              "id": "updateSharedValue",
+                              "type": "menuItem",
+                              "label": "Update Shared Value",
+                              "icons": [
+                                {
+                                  "size": 16,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                                },
+                                {
+                                  "size": 32,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                                },
+                                {
+                                  "size": 80,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                                }
+                              ],
+                              "supertip": {
+                                "title": "Update Shared Value",
+                                "description": "Update Shared Value"
+                              },
+                              "actionId": "taskpane.updateSharedValue",
+                              "overriddenByRibbonApi": true
+                            },
+                            {
+                              "id": "webApplicationInfo.showTaskpane",
+                              "type": "menuItem",
+                              "label": "WebApplicationInfo Show Taskpane",
+                              "icons": [
+                                {
+                                  "size": 16,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                                },
+                                {
+                                  "size": 32,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                                },
+                                {
+                                  "size": 80,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                                }
+                              ],
+                              "supertip": {
+                                "title": "WebApplicationInfo",
+                                "description": "WebApplicationInfo Show Taskpane"
+                              },
+                              "actionId": "webApplicationInfo.showTaskpane"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "contexts": [
+                "readMail"
+              ],
+              "tabs": [
+                {
+                  "nativeId": "TabHome",
+                  "groups": [
+                    {
+                      "id": "richApiGroup",
+                      "label": "RichAPI (OPC MOS Test)",
+                      "icons": [
+                        {
+                          "size": 16,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                        },
+                        {
+                          "size": 32,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                        },
+                        {
+                          "size": 80,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                        }
+                      ],
+                      "controls": [
+                        {
+                          "id": "contextDummy",
+                          "type": "button",
+                          "label": "ReadMail Context",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "ReadMail Context",
+                            "description": "ReadMail Context"
+                          },
+                          "actionId": "taskpane.updateSharedValue"
+                        },
+                        {
+                          "id": "showTaskpane",
+                          "type": "button",
+                          "label": "Taskpane",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Show Taskpane",
+                            "description": "Click to show the RichAPI taskpane"
+                          },
+                          "actionId": "taskpane.showTaskpane"
+                        },
+                        {
+                          "id": "updateSharedValue",
+                          "type": "button",
+                          "label": "Update Shared Value",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Update Shared Value",
+                            "description": "Update Shared Value"
+                          },
+                          "actionId": "taskpane.updateSharedValue"
+                        },
+                        {
+                          "id": "menuControl",
+                          "type": "menu",
+                          "label": "Menu Control",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Menu Control",
+                            "description": "Menu Control"
+                          },
+                          "items": [
+                            {
+                              "id": "showTaskpane",
+                              "type": "menuItem",
+                              "label": "Taskpane",
+                              "icons": [
+                                {
+                                  "size": 16,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                                },
+                                {
+                                  "size": 32,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                                },
+                                {
+                                  "size": 80,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                                }
+                              ],
+                              "supertip": {
+                                "title": "Show Taskpane",
+                                "description": "Click to show the RichAPI taskpane"
+                              },
+                              "actionId": "taskpane.showTaskpane"
+                            },
+                            {
+                              "id": "updateSharedValue",
+                              "type": "menuItem",
+                              "label": "Update Shared Value",
+                              "icons": [
+                                {
+                                  "size": 16,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                                },
+                                {
+                                  "size": 32,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                                },
+                                {
+                                  "size": 80,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                                }
+                              ],
+                              "supertip": {
+                                "title": "Update Shared Value",
+                                "description": "Update Shared Value"
+                              },
+                              "actionId": "taskpane.updateSharedValue"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "contexts": [
+                "appointmentAttendee"
+              ],
+              "tabs": [
+                {
+                  "nativeId": "TabHome",
+                  "groups": [
+                    {
+                      "id": "richApiGroup",
+                      "label": "RichAPI (OPC MOS Test)",
+                      "icons": [
+                        {
+                          "size": 16,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                        },
+                        {
+                          "size": 32,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                        },
+                        {
+                          "size": 80,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                        }
+                      ],
+                      "controls": [
+                        {
+                          "id": "contextDummy",
+                          "type": "button",
+                          "label": "AppointmentAttendee Context",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "AppointmentAttendee Context",
+                            "description": "AppointmentAttendee Context"
+                          },
+                          "actionId": "taskpane.updateSharedValue"
+                        },
+                        {
+                          "id": "showTaskpane",
+                          "type": "button",
+                          "label": "Taskpane",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Show Taskpane",
+                            "description": "Click to show the RichAPI taskpane"
+                          },
+                          "actionId": "taskpane.showTaskpane"
+                        },
+                        {
+                          "id": "updateSharedValue",
+                          "type": "button",
+                          "label": "Update Shared Value",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Update Shared Value",
+                            "description": "Update Shared Value"
+                          },
+                          "actionId": "taskpane.updateSharedValue"
+                        },
+                        {
+                          "id": "menuControl",
+                          "type": "menu",
+                          "label": "Menu Control",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Menu Control",
+                            "description": "Menu Control"
+                          },
+                          "items": [
+                            {
+                              "id": "showTaskpane",
+                              "type": "menuItem",
+                              "label": "Taskpane",
+                              "icons": [
+                                {
+                                  "size": 16,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                                },
+                                {
+                                  "size": 32,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                                },
+                                {
+                                  "size": 80,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                                }
+                              ],
+                              "supertip": {
+                                "title": "Show Taskpane",
+                                "description": "Click to show the RichAPI taskpane"
+                              },
+                              "actionId": "taskpane.showTaskpane"
+                            },
+                            {
+                              "id": "updateSharedValue",
+                              "type": "menuItem",
+                              "label": "Update Shared Value",
+                              "icons": [
+                                {
+                                  "size": 16,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                                },
+                                {
+                                  "size": 32,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                                },
+                                {
+                                  "size": 80,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                                }
+                              ],
+                              "supertip": {
+                                "title": "Update Shared Value",
+                                "description": "Update Shared Value"
+                              },
+                              "actionId": "taskpane.updateSharedValue"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "contexts": [
+                "composeMail"
+              ],
+              "tabs": [
+                {
+                  "nativeId": "TabHome",
+                  "groups": [
+                    {
+                      "id": "richApiGroup",
+                      "label": "RichAPI (OPC MOS Test)",
+                      "icons": [
+                        {
+                          "size": 16,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                        },
+                        {
+                          "size": 32,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                        },
+                        {
+                          "size": 80,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                        }
+                      ],
+                      "controls": [
+                        {
+                          "id": "contextDummy",
+                          "type": "button",
+                          "label": "ComposeMail Context",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "ComposeMail Context",
+                            "description": "ComposeMail Context"
+                          },
+                          "actionId": "taskpane.updateSharedValue"
+                        },
+                        {
+                          "id": "menuControl",
+                          "type": "menu",
+                          "label": "Menu Control",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Menu Control",
+                            "description": "Menu Control"
+                          },
+                          "items": [
+                            {
+                              "id": "showTaskpane",
+                              "type": "menuItem",
+                              "label": "Taskpane",
+                              "icons": [
+                                {
+                                  "size": 16,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                                },
+                                {
+                                  "size": 32,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                                },
+                                {
+                                  "size": 80,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                                }
+                              ],
+                              "supertip": {
+                                "title": "Show Taskpane",
+                                "description": "Click to show the RichAPI taskpane"
+                              },
+                              "actionId": "taskpane.showTaskpane"
+                            },
+                            {
+                              "id": "updateSharedValue",
+                              "type": "menuItem",
+                              "label": "Update Shared Value",
+                              "icons": [
+                                {
+                                  "size": 16,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                                },
+                                {
+                                  "size": 32,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                                },
+                                {
+                                  "size": 80,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                                }
+                              ],
+                              "supertip": {
+                                "title": "Update Shared Value",
+                                "description": "Update Shared Value"
+                              },
+                              "actionId": "taskpane.updateSharedValue"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "contexts": [
+                "appointmentOrganizer"
+              ],
+              "tabs": [
+                {
+                  "nativeId": "TabHome",
+                  "groups": [
+                    {
+                      "id": "richApiGroup",
+                      "label": "RichAPI (OPC MOS Test)",
+                      "icons": [
+                        {
+                          "size": 16,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                        },
+                        {
+                          "size": 32,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                        },
+                        {
+                          "size": 80,
+                          "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                        }
+                      ],
+                      "controls": [
+                        {
+                          "id": "contextDummy",
+                          "type": "button",
+                          "label": "AppointmentOrganizer Context",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "AppointmentOrganizer Context",
+                            "description": "AppointmentOrganizer Context"
+                          },
+                          "actionId": "taskpane.updateSharedValue"
+                        },
+                        {
+                          "id": "menuControl",
+                          "type": "menu",
+                          "label": "Menu Control",
+                          "icons": [
+                            {
+                              "size": 16,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                            },
+                            {
+                              "size": 32,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                            },
+                            {
+                              "size": 80,
+                              "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                            }
+                          ],
+                          "supertip": {
+                            "title": "Menu Control",
+                            "description": "Menu Control"
+                          },
+                          "items": [
+                            {
+                              "id": "showTaskpane",
+                              "type": "menuItem",
+                              "label": "Taskpane",
+                              "icons": [
+                                {
+                                  "size": 16,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                                },
+                                {
+                                  "size": 32,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                                },
+                                {
+                                  "size": 80,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button64x64.png"
+                                }
+                              ],
+                              "supertip": {
+                                "title": "Show Taskpane",
+                                "description": "Click to show the RichAPI taskpane"
+                              },
+                              "actionId": "taskpane.showTaskpane"
+                            },
+                            {
+                              "id": "updateSharedValue",
+                              "type": "menuItem",
+                              "label": "Update Shared Value",
+                              "icons": [
+                                {
+                                  "size": 16,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button16x16.png"
+                                },
+                                {
+                                  "size": 32,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button32x32.png"
+                                },
+                                {
+                                  "size": 80,
+                                  "file": "https://officedev.github.io/testing-assets/addins/MOS-RichApi-Sample/images/button80x80.png"
+                                }
+                              ],
+                              "supertip": {
+                                "title": "Update Shared Value",
+                                "description": "Update Shared Value"
+                              },
+                              "actionId": "taskpane.updateSharedValue"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "keyboards": [
+            {
+              "shortcuts": [
+                {
+                  "key": "Ctrl+Shift+U",
+                  "actionId": "taskpane.updateSharedValue"
+                },
+                {
+                  "key": "Ctrl+Shift+O",
+                  "actionId": "taskpane.showTaskpane"
+                }
+              ]
+            }
+          ],
+          "autoRunEvents": [
+            {
+              "requirements": {
+                "capabilities": [
+                  {
+                    "name": "MailBox",
+                    "minVersion": "1.10"
+                  }
+                ]
+              },
+              "events": [
+                {
+                  "id": "newMessageComposeCreated",
+                  "actionId": "taskpane.addDogfoodSignature"
+                },
+                {
+                  "id": "messageComposeCreated",
+                  "actionId": "taskpane.onMessageCompose"
+                },
+                {
+                  "id": "newAppointmentOrganizerCreated",
+                  "actionId": "taskpane.addDogfoodSignature"
+                },
+                {
+                  "id": "appointmentOrganizerCreated",
+                  "actionId": "taskpane.onAppointmentOrganizer"
+                },
+                {
+                  "id": "messageAttachmentsChanged",
+                  "actionId": "taskpane.onMessageAttachmentsChanged"
+                },
+                {
+                  "id": "appointmentAttachmentsChanged",
+                  "actionId": "taskpane.onAppointmentAttachmentsChanged"
+                },
+                {
+                  "id": "messageSending",
+                  "actionId": "taskpane.onMessageSend",
+                  "options": {
+                    "sendMode": "promptUser"
+                  }
+                },
+                {
+                  "id": "appointmentSending",
+                  "actionId": "taskpane.onAppointmentSend",
+                  "options": {
+                    "sendMode": "softBlock"
+                  }
+                },
+                {
+                  "id": "messageRecipientsChanged",
+                  "actionId": "taskpane.onMessageRecipientsChanged"
+                },
+                {
+                  "id": "appointmentAttendeesChanged",
+                  "actionId": "taskpane.onAppointmentAttendeesChanged"
+                },
+                {
+                  "id": "appointmentTimeChanged",
+                  "actionId": "taskpane.onAppointmentTimeChanged"
+                },
+                {
+                  "id": "appointmentRecurrenceChanged",
+                  "actionId": "taskpane.onAppointmentRecurrenceChanged"
+                },
+                {
+                  "id": "infoBarDismissClicked",
+                  "actionId": "taskpane.onInfoBarDismissClicked"
+                }
+              ]
+            }
+          ],
+          "alternatives": [
+            {
+              "requirements": {
+                "scopes": [ "mail" ]
+              },
+              "prefer": {
+                "comAddin": {
+                  "progId": "ContosoExtension"
+                }
+              },
+              "hide": {
+                "storeOfficeAddin": {
+                  "officeAddinId": "fca2794d-4aa5-4023-a84b-c60a3cbd33d4",
+                  "assetId": "WA129485"
+                }
+              }
+            },
+            {
+              "requirements": {
+                "scopes": [ "presentation", "document", "workbook" ]
+              },
+              "prefer": {
+                "xllCustomfunctions": {
+                  "fileName": "ContosoExtension.xll"
+                },
+                "comAddin": {
+                  "progId": "ContosoExtension"
+                }
+              },
+              "hide": {
+                "customOfficeAddin": {
+                  "officeAddinId": "b5a2794d-4aa5-4023-a84b-c60a3cbd33d4"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "acquisitionState": "Acquired"
+}
